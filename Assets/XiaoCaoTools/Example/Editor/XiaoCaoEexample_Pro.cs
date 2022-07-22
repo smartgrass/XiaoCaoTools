@@ -8,11 +8,9 @@ using XiaoCao;
 
 public class XiaoCaoEexample_Pro : XiaoCaoWindow
 {
-    [CustomLabel("名字")]
     public string s = "aaa";
     public int i = 500;
     
-    [CustomLabel("颜色")]
     public Color color = Color.red;
 
     [HorLayout(true)]

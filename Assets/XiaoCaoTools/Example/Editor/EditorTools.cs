@@ -286,42 +286,6 @@ public class EditorReferenceTools
 public class AssetExtend
 {
 
-    //[MenuItem("Assets/Check/FindMaxSize>1024")]
-    private static void LogType()
-    {
-        var obj = Selection.objects;
-        int count = 0;
-        foreach (var item in obj)
-        {
-            if (item.GetType() == typeof(Texture2D))
-            {
-                var path = AssetDatabase.GetAssetPath(item);
-                try
-                {
-                    TextureImporter importer = (TextureImporter)TextureImporter.GetAtPath(path);
-                    int max = 0;
-                    int com = 0;
-                    TextureImporterFormat Form;
-                    importer.GetPlatformTextureSettings("Standalone", out max, out Form, out com);
-
-                    if (max > 1024)
-                    {
-                        importer.SetPlatformTextureSettings("Standalone", 1024, Form);
-                        importer.maxTextureSize = 1024;
-                        importer.SaveAndReimport();
-                        count++;
-                    }
-                }
-                catch
-                {
-                    Debug.LogError("yns  path " + path);
-                }
-
-            }
-        }
-        Debug.Log("yns  change " + count + "/" + obj.Length);
-        AssetDatabase.Refresh();
-    }
     [MenuItem("Assets/SavaThisAssets")]
     private static void SavaAsset()
     {
@@ -361,7 +325,6 @@ public class AssetExtend
         }
         Selection.objects = finds.ToArray();
     }
-
 
 
 }
