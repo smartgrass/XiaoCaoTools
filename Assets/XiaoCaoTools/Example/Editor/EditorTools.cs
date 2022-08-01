@@ -3,40 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEditor.Experimental.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EditorTools
-{
-    //[MenuItem("GameObject/Check/SelectChildImage", priority = 11)]
-    //public static void SelectChildrenImage()
-    //{
-    //    if (Selection.activeObject == null)
-    //    {
-    //        return;
-    //    }
-
-    //    Transform parent = (Selection.activeObject as GameObject).transform;
-        
-    //    var allChild = parent.GetComponentsInChildren<Image>(true);
-        
-    //    List<GameObject> objList = new List<GameObject>();
-    //    foreach (Image child in allChild)
-    //    {
-    //        objList.Add(child.gameObject);
-    //        Debug.Log(child.name);
-    //    }
-    //    Select(objList.ToArray());
-    //}
-
-    //public static void Select(Object[] objs)
-    //{
-    //    Selection.objects = objs;
-        
-    //}
-
-}
 public class EditorReferenceTools
 {
     [MenuItem("Assets/Check/获取预制体引用")]

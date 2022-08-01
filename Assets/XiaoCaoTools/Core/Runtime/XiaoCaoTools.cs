@@ -11,9 +11,8 @@ using System.Reflection;
 using UnityEditor;
 #endif
 
-public static class StringTool{
-
-    #region 扩展方法
+public static class StringTool
+{
     public static string LogStr(this string str,string title = "Log")
     {
         if(!str.IsEmpty())
@@ -72,7 +71,15 @@ public static class StringTool{
         return string.IsNullOrEmpty(str);
     }
 
-    #endregion
+    public static int ToAnimtorHash(this string name)
+    {
+        return Animator.StringToHash(name);
+    }
+
+}
+
+public static class LogToStringTool
+{
 
     public enum EnumTypeType
     {
@@ -97,22 +104,22 @@ public static class StringTool{
 
     public class ReflectionTypes
     {
-       public Type _string = typeof(string);
-       public Type ValueType = typeof(ValueType);
-       public Type ScriptableObject = typeof(ScriptableObject);
-       public Type Enum = typeof(Enum);
-       public Type IDictionary = typeof(IDictionary);
-       public Type IList = typeof(IList);
+        public Type _string = typeof(string);
+        public Type ValueType = typeof(ValueType);
+        public Type ScriptableObject = typeof(ScriptableObject);
+        public Type Enum = typeof(Enum);
+        public Type IDictionary = typeof(IDictionary);
+        public Type IList = typeof(IList);
     }
 
     public static EnumTypeType GetTypeType(Type type)
     {
-        if(type == Types._string || type.IsSubclassOf(Types.ValueType) 
+        if (type == Types._string || type.IsSubclassOf(Types.ValueType)
             || type.IsSubclassOf(Types.Enum))
         {
             return EnumTypeType.Value;
         }
-        else if (Types.IList.IsAssignableFrom(type)|| type.IsArray)
+        else if (Types.IList.IsAssignableFrom(type) || type.IsArray)
         {
             return EnumTypeType.IList;
         }
@@ -148,22 +155,22 @@ public static class StringTool{
         {
             return (type.Name + " " + targetObj);
         }
-        else if (typetype == EnumTypeType.ToJson )
+        else if (typetype == EnumTypeType.ToJson)
         {
-            return type.Name +"_"+(JsonUtility.ToJson(targetObj));
+            return type.Name + "_" + (JsonUtility.ToJson(targetObj));
         }
         else if (typetype == EnumTypeType.IList)
         {
             var items = targetObj as IList;
-            string title =type.IsGenericType ? $"List<{GetGenArgumentStr(type)}>" : $"{type.GetElementType()}[]";
-            return  items.IELogListStr(title, isLog: false);
+            string title = type.IsGenericType ? $"List<{GetGenArgumentStr(type)}>" : $"{type.GetElementType()}[]";
+            return items.IELogListStr(title, isLog: false);
         }
-        else if(typetype == EnumTypeType.IDic)
+        else if (typetype == EnumTypeType.IDic)
         {
             StringBuilder sb = new StringBuilder(4);
             var items = targetObj as IDictionary;
 
-            sb.Append("dic ").Append( GetGenArgumentStr(type)).Append(type.Name).Append("  ").Append(items.Count).Append("\n");
+            sb.Append("dic ").Append(GetGenArgumentStr(type)).Append(type.Name).Append("  ").Append(items.Count).Append("\n");
 
             foreach (var key in items.Keys)
             {
@@ -174,21 +181,20 @@ public static class StringTool{
         return "";
     }
 
-    public static void LogObjectAll(object targetObj, Type type,int deep = 1,string proName ="")
+    public static void LogObjectAll(object targetObj, Type type, int deep = 1, string proName = "")
     {
         bool isStatic = targetObj == null;
 
         if (!isStatic)
         {
             var typetype = GetTypeType(type);
-            //typetype.ToString().LogStr(type.Name);
-            if(typetype != EnumTypeType.Object)
+            if (typetype != EnumTypeType.Object)
             {
                 if (proName.IsEmpty())
                 {
                     proName = "Value";
                 }
-                GetObjString(targetObj, type).LogStr(proName );
+                GetObjString(targetObj, type).LogStr(proName);
                 return;
             }
         }
@@ -213,9 +219,9 @@ public static class StringTool{
                 curValue = pro.GetValue(targetObj);
 
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Debug.LogWarning(pro.Name+ "  error "+ e);
+                Debug.LogWarning(pro.Name + "  error " + e);
                 continue;
             }
             if (curValue == null)
@@ -259,7 +265,7 @@ public static class StringTool{
 
             var curValue = pro.GetValue(targetObj);
 
-            if(curValue == null)
+            if (curValue == null)
             {
                 Debug.LogWarning(pro.Name + "  curValue null ");
                 return;
@@ -273,21 +279,23 @@ public static class StringTool{
             {
                 if (typetype != EnumTypeType.Object)
                     GetObjString(curValue, baseType).LogStr(pro.Name);
-                    continue;
+                continue;
             }
 
             if (curValue != null)
-            {         
-                if(deep > 0)
+            {
+                if (deep > 0)
                 {
                     if (typetype == EnumTypeType.Object)
                         Debug.Log($">>>deep{deep} {type}.{pro.Name} t:{baseType} value:{curValue}");
-                    LogObjectAll(curValue, baseType, deep - 1,pro.Name);
+                    LogObjectAll(curValue, baseType, deep - 1, pro.Name);
                 }
             }
         }
     }
+
 }
+
 
 public static class PlayerPrefsTool
 {
@@ -311,7 +319,6 @@ public static class PlayerPrefsTool
         return PlayerPrefs.GetString(key, "");
     }
 }
-
 
 public static class FileTool
 {
@@ -466,6 +473,15 @@ public static class FileTool
 
 }
 
+public static class MathTool
+{
+    public static Vector3 ChageDir(Vector3 dir, float angle)
+    {
+        //angle旋转角度 axis围绕旋转轴 position自身坐标 自身坐标 center旋转中心
+        //Quaternion.AngleAxis(angle, axis) * (position - center) + center;
+        return Quaternion.AngleAxis(angle, Vector3.up) * (dir);
+    }
+}
 
 public static class TaskAsyncHelper
 {
@@ -506,5 +522,73 @@ public static class TaskAsyncHelper
         TResult rlt = await taskFunc();
         if (callback != null)
             callback(rlt);
+    }
+}
+
+
+public static class EditorStringTool
+{
+    //移除开头
+    public static string RemoveHead(this string str, string removeStr)
+    {
+        if (str.StartsWith(removeStr))
+        {
+            return str.Remove(0, removeStr.Length);
+        }
+        else
+        {
+            Debug.LogError(str + "no StartsWith" + removeStr);
+            return str;
+        }
+    }
+    //移除结尾
+    public static string RemoveEnd(this string str, string removeStr)
+    {
+        if (str.EndsWith(removeStr))
+        {
+            int len = str.Length;
+            return str.Remove(len - removeStr.Length, removeStr.Length);
+        }
+        else
+        {
+            Debug.LogError(str + "no EndsWith " + removeStr);
+            return str;
+        }
+    }
+
+    //hasExtendName 是后包括文件扩展名
+    //获取路径的文件名
+    public static string GetFileNameByPath(this string str, bool hasExtendName = true)
+    {
+        int last = str.LastIndexOf("/");
+        if (last < 0)
+        {
+            Debug.LogError("yns  no / ");
+        }
+        str = str.Remove(0, last + 1);
+        if (hasExtendName)
+            return str;
+        else
+        {
+            int pointIndex = str.LastIndexOf(".");
+            if (pointIndex < 0)
+            {
+                Debug.LogError("yns  no .");
+                return str;
+            }
+            str = str.Substring(0, pointIndex);
+            return str;
+        }
+    }
+    //将Asset路径转为RessourecePath
+    public static string AssetPathToResPath(this string path)
+    {
+        if (string.IsNullOrEmpty(path))
+        {
+            Debug.Log("yns effect path empty!");
+            return "";
+        }
+        string str = path.RemoveHead("Assets/Resources/");
+        return str.RemoveEnd(".prefab");
     }
 }
