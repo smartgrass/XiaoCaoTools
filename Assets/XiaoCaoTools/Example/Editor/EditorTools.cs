@@ -10,7 +10,7 @@ using UnityEngine.UI;
 
 public class EditorReferenceTools
 {
-    [MenuItem("Assets/Check/获取预制体引用")]
+    [MenuItem("Assets/Check/获取预制体图片引用")]
     static void CheckDependeces()
     {
         List<string> prefabList = new List<string>();
@@ -48,23 +48,23 @@ public class EditorReferenceTools
         }
         return allPngDependecies;
     }
+
     public static List<string> GetAllDependeces(List<string> prefabList)
     {
         string[] allDependencies = AssetDatabase.GetDependencies(prefabList.ToArray(), true);
         List<string> allPngDependecies = new List<string>();
         foreach (var item in allDependencies)
         {
-            allPngDependecies.Add(item);      
+            allPngDependecies.Add(item);
         }
         return allPngDependecies;
     }
-    // "RawResources/Sprite/modelsImg"; 
-    //        //string path = Path.Combine(Application.dataPath, myfolderPath);
+
     public static string[] KnowAllPicture(string dirFullPath)
     {
         List<string> liststring = new List<string>();
 
-        var images = Directory.GetFiles(dirFullPath, ".", SearchOption.AllDirectories).Where(s => s.EndsWith(".png") || s.EndsWith(".jpg")); 
+        var images = Directory.GetFiles(dirFullPath, ".", SearchOption.AllDirectories).Where(s => s.EndsWith(".png") || s.EndsWith(".jpg"));
 
         foreach (var i in images)
         {
@@ -77,13 +77,13 @@ public class EditorReferenceTools
     }
 
     //endsWith  ".png"
-    public static string[] KnowAllTypeFile(string dirFullPath,string[] endsWith)
+    public static string[] KnowAllTypeFile(string dirFullPath, string[] endsWith)
     {
         List<string> liststring = new List<string>();
 
         var images = Directory.GetFiles(dirFullPath, ".", SearchOption.AllDirectories).
         Where(
-            (s)=>
+            (s) =>
             {
                 foreach (var item in endsWith)
                 {
@@ -104,7 +104,6 @@ public class EditorReferenceTools
         return liststring.ToArray();
     }
 
-
     //路径转全局路径
     public static string AssetPathToFullPath(string assestPath)
     {
@@ -121,11 +120,18 @@ public class EditorReferenceTools
         }
     }
 
+    //将资源移动到别处 并标记为unsing
     public static void MoveTextureToUnPackage(string oldPath, string newPath)
     {
         string pngName = oldPath.Split('/').Last();
 
         string targetNewPath = $"{newPath}/{pngName}";
+
+        if (oldPath == targetNewPath)
+        {
+            Debug.Log($"yns path same {oldPath}");
+            return;
+        }
 
         if (File.Exists(targetNewPath))
         {
@@ -138,8 +144,7 @@ public class EditorReferenceTools
     }
 
 
-
-    [MenuItem("Assets/Check/查找当前使用")]
+    [MenuItem("Assets/Check/查找图片当前使用")]
     public static void FindPngInAll()
     {
         PrefabStage prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
@@ -172,9 +177,9 @@ public class EditorReferenceTools
                 finds.Add(item.gameObject);
                 isFind = true;
             }
-            else if(item.material!=null)
+            else if (item.material != null)
             {
-                if(item.material.mainTexture == tex)
+                if (item.material.mainTexture == tex)
                 {
                     finds.Add(item.gameObject);
                     isFind = true;
@@ -198,7 +203,7 @@ public class EditorReferenceTools
             Debug.Log($"yns no Find Using");
         }
         Selection.objects = finds.ToArray();
- 
+
     }
 
     private static void FindPngInGame()
@@ -236,149 +241,31 @@ public class EditorReferenceTools
             Debug.Log("yns no find ");
         }
     }
-    [MenuItem("Assets/Check/标记为UnUsing")]
-    private static void RenameUnusing()
-    {
-        var allPath =  GetSelectsPath(Selection.objects);
-        foreach (var item in allPath)
-        {
-            if (!item.Contains("(UnUsing)")&& item.EndsWith(".png"))
-            {
-                FileInfo info = new FileInfo(AssetPathToFullPath(item));
-                info.Name.LogStr();
-                AssetDatabase.RenameAsset(item, "(UnUsing)" + info.Name);
-            }
-        }
-    }
 
 }
 
 
-public class AssetExtend
+public class EditorAssetExtend
 {
-
-    //[MenuItem("Assets/Check/FindMaxSize>1024")]
-    private static void LogType()
-    {
-        var obj = Selection.objects;
-        int count = 0;
-        foreach (var item in obj)
-        {
-            if (item.GetType() == typeof(Texture2D))
-            {
-                var path = AssetDatabase.GetAssetPath(item);
-                try
-                {
-                    TextureImporter importer = (TextureImporter)TextureImporter.GetAtPath(path);
-                    int max = 0;
-                    int com = 0;
-                    TextureImporterFormat Form;
-                    importer.GetPlatformTextureSettings("Standalone", out max, out Form, out com);
-
-                    if (max > 1024)
-                    {
-                        importer.SetPlatformTextureSettings("Standalone", 1024, Form);
-                        importer.maxTextureSize = 1024;
-                        importer.SaveAndReimport();
-                        count++;
-                    }
-                }
-                catch
-                {
-                    Debug.LogError("yns  path " + path);
-                }
-
-            }
-        }
-        Debug.Log("yns  change " + count + "/" + obj.Length);
-        AssetDatabase.Refresh();
-    }
     [MenuItem("Assets/SavaThisAssets")]
-    private static void SavaAsset()
+    private static void SavaSelectAsset(UnityEngine.Object obj)
     {
-        var obj = Selection.objects;
-        EditorUtility.SetDirty(obj[0]);
+        SavaAsset(Selection.activeObject);
+    }
+
+    public static void SavaAsset(UnityEngine.Object obj)
+    {
+        if (obj == null)
+            return;
+
+        EditorUtility.SetDirty(obj);
+        if (obj is ScriptableObject)
+        {
+            var serializedObject = new SerializedObject(new UnityEngine.Object[] { obj}, obj);
+            serializedObject.ApplyModifiedProperties();
+            Debug.Log($"yns  ApplyModifiedProperties");
+        }
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
     }
-
-    [MenuItem("Assets/Check/SelectMaxSize>360")]
-    private static void SelectMaxSize()
-    {
-        var obj = Selection.objects;
-        int count = 0;
-        List<Object> finds = new List<Object>();
-        foreach (var item in obj)
-        {
-            if (item.GetType() == typeof(Texture2D))
-            {
-                var path = AssetDatabase.GetAssetPath(item);
-                try
-                {
-                    var tx = ((Texture2D)item);
-                    int max = Mathf.Max(tx.width, tx.height);
-
-                    if (max > 360)
-                    {
-                        finds.Add(item);
-                        count++;
-                    }
-                }
-                catch
-                {
-                    Debug.LogError("yns  path " + path);
-                }
-            }
-        }
-        Selection.objects = finds.ToArray();
-    }
-
-
-
 }
-
-#region 右键复制 InspectorExtent
-public class InspectorExtent
-{
-    [MenuItem("CONTEXT/Transform/LogUITFPos")]
-    private static void LogUITFPos(MenuCommand menuCommand)
-    {
-        var tf = menuCommand.context as Transform;
-        Debug.Log("yns pos = " + tf.position);
-        Debug.Log("Screen w " + Screen.width + " h " + Screen.height);
-    }
-    // 示例 (MenuCommand menuCommand)
-    [MenuItem("CONTEXT/Transform/复制Grid-小")]
-    private static void CopyGrid(MenuCommand menuCommand)
-    {
-        var tf = menuCommand.context as Transform;
-        SetContentCopy("grid", tf);
-    }
-    [MenuItem("CONTEXT/Transform/复制Show-大")]
-    private static void CopyShow(MenuCommand menuCommand)
-    {
-        var tf = menuCommand.context as Transform;
-        SetContentCopy("show", tf);
-    }
-
-    private static string SetContentCopy(string title, Transform tf)
-    {
-        string Position = string.Format("\"{0}Position\" : [{1}, {2}, {3}],", title, tf.localPosition.x, tf.localPosition.y, tf.localPosition.z);
-        string Rotation = string.Format("\"{0}Rotation\" : [{1}, {2}, {3}],", title, tf.localEulerAngles.x, tf.localEulerAngles.y, tf.localEulerAngles.z);
-        string Scale = string.Format("\"{0}Scale\" : [{1}, {2}, {3}],", title, tf.localScale.x, tf.localScale.y, tf.localScale.z);
-
-        string res = string.Format("\t  {0}\n\t  {1}\n\t  {2}", Position, Rotation, Scale);
-        CopyStr(res);
-
-        EditorUtility.DisplayDialog("复制", res, "确定");
-        return res;
-    }
-
-    public static void CopyStr(string value)
-    {
-        GUIUtility.systemCopyBuffer = value;
-    }
-
-}
-#endregion
-
