@@ -248,9 +248,15 @@ public class EditorReferenceTools
 public class EditorAssetExtend
 {
     [MenuItem("Assets/SavaThisAssets")]
-    private static void SavaSelectAsset(UnityEngine.Object obj)
+    private static void SavaSelectAsset()
     {
         SavaAsset(Selection.activeObject);
+    }
+
+    [MenuItem("Assets/Check/输出Type")]
+    private static void LogType()
+    {
+        Selection.activeObject.GetType().Name.LogStr(Selection.activeObject.name); 
     }
 
     public static void SavaAsset(UnityEngine.Object obj)

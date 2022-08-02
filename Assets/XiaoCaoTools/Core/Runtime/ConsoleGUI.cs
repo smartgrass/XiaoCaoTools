@@ -44,24 +44,28 @@ namespace Consolation
         public int maxLogs = 350;
 
         public KeyCode HotKey = KeyCode.F12;
-        
+        [Header("Window")]
         [Range(0,1)]
         public float WinW =1f;
         [Range(0, 1)]
         public float WinH = 0.7f;
-
         public float WinTop = 32;
-
         public float SrollWith = 25;
-
-        public float BtnW = 100;
-        public float BtnH = 50;
-
-
-
         public int DownBarLineHight = 35;
 
+        [Header("Button")]
+        public float BtnW = 100;
+        public float BtnH = 50;
         public float BtnSpace = 15;
+
+        [Header("Toggle")]
+        public float toggleH =40;
+        public float toggleW =100;
+        public float toggleOffsetY =10;
+        public int toggleFontSize =16;
+        private RectOffset toggleOffset;
+
+
         #endregion
 
         #region system
@@ -121,7 +125,7 @@ namespace Consolation
             windowRect = new Rect(Screen.width * (1-WinW)/2, BtnH+ WinTop, Screen.width *WinW, Screen.height * WinH);
             btnStyle = new GUIStyle(GUI.skin.button);
             toggleStyle = GUI.skin.toggle;
-
+            toggleOffset = toggleStyle.margin;
             isStarted = true; ;
         }
 
@@ -311,8 +315,14 @@ namespace Consolation
             }
             GUILayout.Space(20);
 
+            toggleStyle.fixedWidth = toggleW;
+            toggleStyle.fixedHeight = toggleH;
+            toggleStyle.fontSize = (int)toggleFontSize;
+            toggleOffset.top = (int)toggleOffsetY;
+            toggleStyle.margin = toggleOffset;
 
-           collapse = GUILayout.Toggle(collapse, collapseLabel, toggleStyle);
+
+            collapse = GUILayout.Toggle(collapse, collapseLabel, toggleStyle);
 
             isErrorDetail = GUILayout.Toggle(isErrorDetail, fieldLabel, toggleStyle);
 
