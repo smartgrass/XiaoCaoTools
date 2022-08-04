@@ -259,6 +259,13 @@ public class EditorAssetExtend
         Selection.activeObject.GetType().Name.LogStr(Selection.activeObject.name); 
     }
 
+    [MenuItem("CONTEXT/Object/LogThis")]
+    private static void LogCur(MenuCommand menuCommand)
+    {
+        var obj = menuCommand.context;
+        LogToStringTool.LogObjectAll(obj, obj.GetType());
+    }
+
     public static void SavaAsset(UnityEngine.Object obj)
     {
         if (obj == null)
