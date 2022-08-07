@@ -195,9 +195,14 @@ public class XiaoCaoReferenceWindow2 : XiaoCaoWindow
             unUseAsset.Add(AssetDatabase.LoadAssetAtPath<Object>(item));
         }
 
-        UpdateView();
+
         //string[] allDependencies = AssetDatabase.GetDependencies(, true);
         //allDependencies.IELogListStr();
+    }
+    //[Button("UpdateView")]
+    private void fun1()
+    {
+        UpdateView();
     }
 
     private void FindOnePngUsingPrefab(Dictionary<string, int> HasUsingPngDic, string pngPath)
