@@ -230,10 +230,4 @@ namespace XiaoCao
 
 
     #endregion
-
-    public class DrawInfo
-    {
-        public int index = 0;
-        public bool isBeginHor = false;
-    }
 }

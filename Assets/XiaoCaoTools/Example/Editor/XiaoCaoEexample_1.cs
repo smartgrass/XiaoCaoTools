@@ -16,9 +16,9 @@ public class XiaoCaoEexample_1 : XiaoCaoWindow
     //[Label] [Dropdown] [ShowIf] [Button]
 
 
-    [Label("这是str1")]
+    [XCLabel("这是str1")]
     public string str1;
-    [Label("这是str2")]
+    [XCLabel("这是str2")]
     public string str2;
 
     public Color color = Color.red;
