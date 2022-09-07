@@ -20,26 +20,6 @@ public static class StringTool
         return str;
     }
 
-    public static string IELogListStr(this IList IEStrs, string title = "" ,bool isLog = true)
-    {
-        string res = "";
-        int i = 0;
-        foreach (var item in IEStrs)
-        {
-            res += item.ToString() + ",";
-            i++;
-            if (i % 10 == 0)
-            {
-                res += "\n";
-            }
-        }
-        title += " (len = " + i + ")\n";
-        string end = string.Format("{0}{1}", title, res);
-        if (isLog)
-            Debug.Log(end);
-        return end;
-    }
-
     public static void IELogStr(this IEnumerable IEStrs, string title = "Log")
     {
         if (IEStrs == null)
@@ -63,17 +43,6 @@ public static class StringTool
         }
         title += ": " + i + "\n";
         Debug.LogFormat("{0}{1}", title, res);
-    }
-
-
-    public static bool IsEmpty(this string str)
-    {
-        return string.IsNullOrEmpty(str);
-    }
-
-    public static int ToAnimtorHash(this string name)
-    {
-        return Animator.StringToHash(name);
     }
 
 }
@@ -523,6 +492,17 @@ public static class TaskAsyncHelper
         if (callback != null)
             callback(rlt);
     }
+}
+
+
+public static class DelayHelper
+{
+    public static async void DelayAsyncDo(Action action,float time)
+    {
+        await Task.Delay((int)(time*1000));
+        action.Invoke();
+    }
+
 }
 
 
