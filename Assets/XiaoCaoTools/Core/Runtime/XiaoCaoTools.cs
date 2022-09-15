@@ -20,6 +20,26 @@ public static class StringTool
         return str;
     }
 
+    public static string IELogListStr(this IList IEStrs, string title = "" ,bool isLog = true)
+    {
+        string res = "";
+        int i = 0;
+        foreach (var item in IEStrs)
+        {
+            res += item.ToString() + ",";
+            i++;
+            if (i % 10 == 0)
+            {
+                res += "\n";
+            }
+        }
+        title += " (len = " + i + ")\n";
+        string end = string.Format("{0}{1}", title, res);
+        if (isLog)
+            Debug.Log(end);
+        return end;
+    }
+
     public static void IELogStr(this IEnumerable IEStrs, string title = "Log")
     {
         if (IEStrs == null)
@@ -29,7 +49,7 @@ public static class StringTool
         }
         string res = "";
         int i = 0;
-        foreach (IEnumerable item in IEStrs)
+        foreach (var item in IEStrs)
         {
             if (item != null)
             {
@@ -43,6 +63,17 @@ public static class StringTool
         }
         title += ": " + i + "\n";
         Debug.LogFormat("{0}{1}", title, res);
+    }
+
+
+    public static bool IsEmpty(this string str)
+    {
+        return string.IsNullOrEmpty(str);
+    }
+
+    public static int ToAnimtorHash(this string name)
+    {
+        return Animator.StringToHash(name);
     }
 
 }
@@ -95,12 +126,11 @@ public static class LogToStringTool
         else if (Types.IDictionary.IsAssignableFrom(type))
         {
             return EnumTypeType.IDic;
-        }
-        else if (type.IsSubclassOf(Types.ScriptableObject) || type.IsSerializable)
+        }//type.IsSerializable 属性是ToJson不了的
+        else if (type.IsSubclassOf(Types.ScriptableObject) || (type.GetCustomAttribute<System.SerializableAttribute>()!=null && type.GetFields().Length >1 ))
         {
             return EnumTypeType.ToJson;
         }
-
 
         return EnumTypeType.Object;
     }
@@ -157,13 +187,14 @@ public static class LogToStringTool
         if (!isStatic)
         {
             var typetype = GetTypeType(type);
-            if (typetype != EnumTypeType.Object)
+            if (typetype != EnumTypeType.Object && deep ==1)
             {
                 if (proName.IsEmpty())
                 {
                     proName = "Value";
                 }
-                GetObjString(targetObj, type).LogStr(proName);
+
+                GetObjString(targetObj, type).LogStr(typetype.ToString() + "_" +proName);
                 return;
             }
         }
@@ -446,6 +477,8 @@ public static class MathTool
 {
     public static Vector3 ChageDir(Vector3 dir, float angle)
     {
+        if (angle == 0)
+            return dir;
         //angle旋转角度 axis围绕旋转轴 position自身坐标 自身坐标 center旋转中心
         //Quaternion.AngleAxis(angle, axis) * (position - center) + center;
         return Quaternion.AngleAxis(angle, Vector3.up) * (dir);
@@ -492,17 +525,6 @@ public static class TaskAsyncHelper
         if (callback != null)
             callback(rlt);
     }
-}
-
-
-public static class DelayHelper
-{
-    public static async void DelayAsyncDo(Action action,float time)
-    {
-        await Task.Delay((int)(time*1000));
-        action.Invoke();
-    }
-
 }
 
 
