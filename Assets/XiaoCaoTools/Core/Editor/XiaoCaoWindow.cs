@@ -21,7 +21,7 @@ namespace XiaoCao
         private List<ButtonAttribute> noPosMethod;  //无顺序方法放最后
         //private int horCount = 1;
 
-
+        SerializedObject obj;
 
         public static T OpenWindow<T>(string title = "") where T : XiaoCaoWindow
         {
@@ -36,6 +36,7 @@ namespace XiaoCao
 
         public virtual void OnEnable()
         {
+            obj = new SerializedObject(new UnityEngine.Object[] { this }, this);
             //获取按钮方法
             methodDic = new Dictionary<int, List<ButtonAttribute>>();
             noPosMethod = new List<ButtonAttribute>();
@@ -90,7 +91,7 @@ namespace XiaoCao
         internal bool DrawInspector()
         {
             EditorGUI.BeginChangeCheck();
-            var obj = new SerializedObject(new UnityEngine.Object[] { this }, this);
+            
             obj.UpdateIfRequiredOrScript();
             SerializedProperty property = obj.GetIterator();
 
@@ -134,6 +135,8 @@ namespace XiaoCao
 
                         if (EditorGUI.EndChangeCheck())
                         {
+                            //EditorUtility.SetDirty(this);
+                            //this.SaveChanges();
                             PropertyUtility.CallOnValueChangedCallbacks(property);
                         }
                     }
