@@ -36,13 +36,15 @@ namespace XiaoCao
 
         public virtual void OnEnable()
         {
-            obj = new SerializedObject(new UnityEngine.Object[] { this }, this);
+            obj = new SerializedObject(this , this);
+
             //获取按钮方法
             methodDic = new Dictionary<int, List<ButtonAttribute>>();
             noPosMethod = new List<ButtonAttribute>();
             methods = this.GetType()
            .GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public |
                 BindingFlags.NonPublic).Where(o => Attribute.IsDefined(o, typeof(ButtonAttribute)));
+
             foreach (var item in methods)
             {
                 var att = item.GetCustomAttribute<ButtonAttribute>();
@@ -91,19 +93,52 @@ namespace XiaoCao
         internal bool DrawInspector()
         {
             EditorGUI.BeginChangeCheck();
-            
             obj.UpdateIfRequiredOrScript();
-            SerializedProperty property = obj.GetIterator();
 
             DrawHeader(obj);
+            SerializedProperty property = obj.GetIterator();
+            DrawWindowContent(property);
 
-            DrawContent(property);
             obj.ApplyModifiedProperties();
             return EditorGUI.EndChangeCheck();
         }
 
+        //绘制默认内容
+        public static bool DoDrawDefaultInspector(SerializedObject obj)
+        {
+            EditorGUI.BeginChangeCheck();
+            obj.UpdateIfRequiredOrScript();
+
+            // Loop through properties and create one field (including children) for each top level property.
+            SerializedProperty property = obj.GetIterator();
+            bool expanded = true;
+            while (property.NextVisible(expanded))
+            {
+                using (new EditorGUI.DisabledScope("m_Script" == property.propertyPath))
+                {
+                    EditorGUILayout.PropertyField(property, true);
+                }
+                expanded = false;
+            }
+
+            obj.ApplyModifiedProperties();
+            return EditorGUI.EndChangeCheck();
+        }
+        //绘制ScriptableObject
+        public static void CheckDrawScriptableObject(SerializedProperty property)
+        {
+            if (property.propertyType == SerializedPropertyType.ObjectReference)
+            {
+                ScriptableObject so = property.objectReferenceValue as ScriptableObject;
+                if (so != null)
+                {
+                    var soSo = new SerializedObject(so, so);
+                    DoDrawDefaultInspector(soSo);
+                }
+            }
+        }
         //绘制头部
-        private static void DrawHeader(SerializedObject obj)
+        public static void DrawHeader(SerializedObject obj)
         {
             SerializedProperty scriptProperty = obj.FindProperty("m_Script");
             if (scriptProperty != null)
@@ -117,7 +152,7 @@ namespace XiaoCao
         }
 
         //开始绘制
-        private void DrawContent(SerializedProperty property)
+        private void DrawWindowContent(SerializedProperty property)
         {
             bool isExpend = true; //第一次是整个类, 需要展开子项
             int index = 0;
@@ -129,14 +164,13 @@ namespace XiaoCao
                     {
                         EditorGUI.BeginChangeCheck();
 
-
                         EditorGUILayout.PropertyField(property, new GUIContent(PropertyUtility.GetLabel(property)), true);
 
+                        CheckDrawScriptableObject(property);
 
                         if (EditorGUI.EndChangeCheck())
                         {
-                            //EditorUtility.SetDirty(this);
-                            //this.SaveChanges();
+                            //单字段 值变化监听
                             PropertyUtility.CallOnValueChangedCallbacks(property);
                         }
                     }
@@ -147,16 +181,15 @@ namespace XiaoCao
                 index++;
             }
 
+            DrawEndBtns();
+        }
+
+        private void DrawEndBtns()
+        {
             for (int i = -1; i > -10; i--)
             {
                 DrawButtonPos(i);
             }
-            DrawEndBtn();
-        }
-
-
-        void DrawEndBtn()
-        {
             foreach (var item in noPosMethod)
             {
                 if (GUILayout.Button(item.name))
@@ -190,7 +223,6 @@ namespace XiaoCao
 
         public void UpdateView()
         {
-            //typeof(EditorUtility).GetMethod("ForceRebuildInspectors").Invoke(null, null);
             this.Repaint();
         }
 
