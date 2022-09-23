@@ -93,6 +93,8 @@ public class XiaoCaoEexample_1 : XiaoCaoWindow
     }
 
     //7.========== ScriptableObject 查看 ==========
+    //加上[SerializeField]标记为可展开对象
+    [SerializeField]
     public Object findObject;
 
 }
