@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -59,5 +60,14 @@ namespace XiaoCao
             return objList;
         }
 
+    }
+
+    public static class XiaocaoPathTool
+    {
+        public static string FindXicaoDirectory()
+        {
+            string[] directories = Directory.GetDirectories("Assets", "XiaoCaoTools", SearchOption.AllDirectories);
+            return directories.Length > 0 ? directories[0] : string.Empty;
+        }
     }
 }

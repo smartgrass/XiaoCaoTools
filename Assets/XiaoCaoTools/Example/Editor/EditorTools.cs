@@ -104,14 +104,6 @@ public class EditorReferenceTools
         return liststring.ToArray();
     }
 
-    //路径转全局路径
-    public static string AssetPathToFullPath(string assestPath)
-    {
-        string shortPath = assestPath.Remove(0, "Assets/".Length);
-        string dirPath = Path.Combine(Application.dataPath, shortPath);
-        return dirPath;
-    }
-
     public static void MoveTextureToUnPackage(List<string> moveList, string newPath)
     {
         for (int i = 0; i < moveList.Count; i++)

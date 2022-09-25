@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using NaughtyAttributes;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -198,11 +199,6 @@ public class XiaoCaoReferenceWindow2 : XiaoCaoWindow
 
         //string[] allDependencies = AssetDatabase.GetDependencies(, true);
         //allDependencies.IELogListStr();
-    }
-    //[Button("UpdateView")]
-    private void fun1()
-    {
-        UpdateView();
     }
 
     private void FindOnePngUsingPrefab(Dictionary<string, int> HasUsingPngDic, string pngPath)

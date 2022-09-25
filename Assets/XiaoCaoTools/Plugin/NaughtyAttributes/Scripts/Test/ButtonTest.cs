@@ -7,23 +7,23 @@ namespace NaughtyAttributes.Test
 	{
 		public int myInt;
 
-		[Button(enabledMode: EButtonEnableMode.Always)]
-		private void IncrementMyInt()
-		{
-			myInt++;
-		}
+		//[Button(enabledMode: EButtonEnableMode.Always)]
+		//private void IncrementMyInt()
+		//{
+		//	myInt++;
+		//}
 
-		[Button("Decrement My Int", EButtonEnableMode.Editor)]
-		private void DecrementMyInt()
-		{
-			myInt--;
-		}
+		//[Button("Decrement My Int", EButtonEnableMode.Editor)]
+		//private void DecrementMyInt()
+		//{
+		//	myInt--;
+		//}
 
-		[Button(enabledMode: EButtonEnableMode.Playmode)]
-		private void LogMyInt(string prefix = "MyInt = ")
-		{
-			Debug.Log(prefix + myInt);
-		}
+		//[Button(enabledMode: EButtonEnableMode.Playmode)]
+		//private void LogMyInt(string prefix = "MyInt = ")
+		//{
+		//	Debug.Log(prefix + myInt);
+		//}
 
 		[Button("StartCoroutine")]
 		private IEnumerator IncrementMyIntCoroutine()

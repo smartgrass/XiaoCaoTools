@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using XiaoCao;
-using ButtonAttribute = XiaoCao.ButtonAttribute;
 
 public class XiaoCaoObjectUsing : XiaoCaoWindow
 {

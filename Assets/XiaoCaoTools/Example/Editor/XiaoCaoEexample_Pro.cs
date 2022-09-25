@@ -1,11 +1,14 @@
-﻿using System;
+﻿using NaughtyAttributes;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEditor.Graphs;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using XiaoCao;
 using static UnityEditor.SearchableEditorWindow;
 using Object = UnityEngine.Object;
@@ -13,7 +16,6 @@ using Object = UnityEngine.Object;
 public class XiaoCaoEexample_Pro : XiaoCaoWindow
 {
     public List<Object> assets;
-
     public string search;
 
     [MenuItem("Tools/XiaoCao/Eexample_Pro")]
@@ -41,16 +43,29 @@ public class XiaoCaoEexample_Pro : XiaoCaoWindow
             assets.Add(EditorWindow.GetWindow(winType));
         }
     }
-    [Button("查看assets[0]的所有方法")]
-    private void fun1()
+
+    [Button()]
+    private void FindAllWindow()
     {
-        BindingFlags bindingFlag = (System.Reflection.BindingFlags.SuppressChangeType - 1)| System.Reflection.BindingFlags.SuppressChangeType;
+        var wins = Resources.FindObjectsOfTypeAll<EditorWindow>();
+        assets = new List<Object>();
+        foreach (var win in wins)
+        {
+            assets.Add(win);
+        }
+    }
+
+    [Button("查看assets[0]的所有方法")]
+    private void GetMethods()
+    {
+        BindingFlags bindingFlag = ((BindingFlags)(-1));
         var pros = assets[0].GetType().GetMethods(bindingFlag);
         foreach (var item in pros)
         {
             Debug.Log($"{item} {GetGetParametersStr(item.GetParameters())}");
         }
     }
+
 
     private string GetGetParametersStr(ParameterInfo[] pars)
     {
@@ -76,12 +91,15 @@ public class XiaoCaoEexample_Pro : XiaoCaoWindow
     private void SetSearchFilter()
     {
         //Void SetSearchFilter(System.String, SearchMode, Boolean, Boolean)
-        BindingFlags bindingFlag = (System.Reflection.BindingFlags.SuppressChangeType - 1) | System.Reflection.BindingFlags.SuppressChangeType;
+        FindWindow();
 
-        var searchwin = assets.Find(a => a.GetType().ToString() == "UnityEditor.SceneHierarchyWindow");
+        BindingFlags bindingFlag = ((BindingFlags)(-1));
+
+        var searchwin = assets.Find(a => "UnityEditor.SceneHierarchyWindow".EndsWith(a.GetType().Name));
 
         var method = searchwin.GetType().GetMethod("SetSearchFilter", bindingFlag);
 
-        method.Invoke(assets[0], new object[]{ search, SearchMode.All, true, true});
+        method.Invoke(searchwin, new object[]{ search, SearchMode.All, true, true});
     }
+
 }

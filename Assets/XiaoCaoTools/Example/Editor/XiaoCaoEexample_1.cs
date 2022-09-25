@@ -1,13 +1,13 @@
 ﻿using NaughtyAttributes;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using XiaoCao;
-using ButtonAttribute = XiaoCao.ButtonAttribute;
 using Object = UnityEngine.Object;
 
 public class XiaoCaoEexample_1 : XiaoCaoWindow
@@ -62,14 +62,14 @@ public class XiaoCaoEexample_1 : XiaoCaoWindow
 
     //5.========== Button 显示按钮 ==========
     //[Button( 按钮名字 , 按钮位置)]
+    // -6 表示放插入字段的位置的第六个位置
     [ShowIf(nameof(isShow))]
-    [Button("Button6", 6)]
+    [Button("OnShowBtn", -6)]
     private void OnShowBtn()
     {
         Debug.Log($"yns Button6 ");
     }
 
-    // -1表示放末尾, 最小是-10
     // 如果数字相同,则按钮挤在同一行
     [Button("ButtonA-1", -1)]
     private void Fun4()
