@@ -169,10 +169,10 @@ namespace NaughtyAttributes.Editor
                 else
                 {
                     //是否 绘制可扩展对象
-                    if (!CheckDrawSubProperty(property))
-                    {
+                    //if (!CheckDrawSubProperty(property))
+                    //{
                         NaughtyEditorGUI.PropertyField_Layout(property, true);
-                    }
+                    //}
 
                     //按钮
                     if (methodDic.ContainsKey(-i))

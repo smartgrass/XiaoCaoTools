@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,8 +28,8 @@ namespace NaughtyAttributes.Editor
             PropertyField_Implementation(dummyRect, property, includeChildren, DrawPropertyField_Layout);
         }
 
-        //»æÖÆÄ¬ÈÏÄÚÈÝ
-        public static bool DoDrawDefaultInspector(SerializedObject obj)
+
+        public static bool DoDrawDefaultInspector(SerializedObject obj ,bool hander = false)
         {
             EditorGUI.BeginChangeCheck();
             obj.UpdateIfRequiredOrScript();
@@ -38,7 +38,14 @@ namespace NaughtyAttributes.Editor
             bool expanded = true;
             while (property.NextVisible(expanded))
             {
-                using (new EditorGUI.DisabledScope("m_Script" == property.propertyPath))
+                if("m_Script" == property.propertyPath && hander)
+                {
+                    using (new EditorGUI.DisabledScope(true))
+                    {
+                        EditorGUILayout.PropertyField(property, true);
+                    }
+                }
+                else
                 {
                     EditorGUILayout.PropertyField(property, true);
                 }
