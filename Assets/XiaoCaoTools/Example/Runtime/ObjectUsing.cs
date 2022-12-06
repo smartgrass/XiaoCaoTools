@@ -6,5 +6,5 @@ using UnityEngine;
 [CreateAssetMenu(menuName= "ObjectUsing",fileName = "ObjectUsing")]
 public class ObjectUsing : ScriptableObject
 {
-    public List<Object> objects;
+    public List<Object> ObjectList;
 }

@@ -171,7 +171,7 @@ namespace NaughtyAttributes.Editor
                     //是否 绘制可扩展对象
                     //if (!CheckDrawSubProperty(property))
                     //{
-                        NaughtyEditorGUI.PropertyField_Layout(property, true);
+                    NaughtyEditorGUI.PropertyField_Layout(property, true);
                     //}
 
                     //按钮

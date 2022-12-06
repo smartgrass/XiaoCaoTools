@@ -10,7 +10,7 @@ using Object = UnityEngine.Object;
 
 namespace XiaoCao
 {
-    public static class XiaocaoEditorTool
+    public static class XCEditorTool
     {
         public static void SelectSelf(this UnityEngine.Object self)
         {
@@ -60,6 +60,41 @@ namespace XiaoCao
             return objList;
         }
 
+
+
+        public static ObjectUsing GetOrNewSO(string path)
+        {
+            ObjectUsing objectUsing = AssetDatabase.LoadAssetAtPath<ObjectUsing>(path);
+            if (objectUsing == null)
+            {
+                if (!Directory.Exists(path))
+                {
+                    Debug.Log($"yns  CreateDirectory {path}");
+                    Directory.CreateDirectory(path);
+                }
+
+                var newObject = ScriptableObject.CreateInstance<ObjectUsing>();
+                AssetDatabase.CreateAsset(newObject, path);
+                AssetDatabase.Refresh();
+                objectUsing = AssetDatabase.LoadAssetAtPath<ObjectUsing>(path);
+                Debug.Log($"yns Creat");
+            }
+            return objectUsing;
+        }
+
+        public static ScriptableObject GetOrNewSO<T>(string path) where T : ScriptableObject
+        {
+            ScriptableObject objectUsing = AssetDatabase.LoadAssetAtPath<T>(path);
+            if (objectUsing == null)
+            {
+                var newObject = ScriptableObject.CreateInstance<T>();
+                AssetDatabase.CreateAsset(newObject, path);
+                AssetDatabase.Refresh();
+                objectUsing = AssetDatabase.LoadAssetAtPath<T>(path);
+                Debug.Log($"yns Creat");
+            }
+            return objectUsing;
+        }
     }
 
     public static class XiaocaoPathTool
