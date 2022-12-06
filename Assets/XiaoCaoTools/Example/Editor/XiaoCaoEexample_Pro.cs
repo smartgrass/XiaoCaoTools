@@ -18,7 +18,7 @@ public class XiaoCaoEexample_Pro : XiaoCaoWindow
     public List<Object> assets;
     public string search;
 
-    [MenuItem("Tools/XiaoCao/Eexample_Pro")]
+    [MenuItem("Tools/XiaoCao/Unity基本窗口查看")]
     static void Open()
     {
         OpenWindow<XiaoCaoEexample_Pro>();
@@ -87,7 +87,7 @@ public class XiaoCaoEexample_Pro : XiaoCaoWindow
     }
 
 
-    [Button("测试查询")]
+    [Button("查询Hierarchy")]
     private void SetSearchFilter()
     {
         //Void SetSearchFilter(System.String, SearchMode, Boolean, Boolean)
