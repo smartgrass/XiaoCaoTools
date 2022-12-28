@@ -1,7 +1,6 @@
-# XiaoCaoTools
-# 主要功能：XiaoCaoWindow
+# XiaoCaoTools-XiaoCaoWindow
 
-作为窗口基类，用于快速搭建编辑器窗口
+XiaoCaoWindow作为窗口基类，用于快速搭建编辑器窗口
 
 基于开源项目[NaughtyAttributes](https://github.com/dbrizov/NaughtyAttributes) 改写 
  
