@@ -6,8 +6,6 @@
 基于开源项目NaughtyAttributes改写 https://github.com/dbrizov/NaughtyAttributes 
  
 
-<img src="https://github.com/smartgrass/XiaoCaoTools/blob/main/GitImages/Window.png" width= "500"/>
-
 
 如定义简单窗口 带一个按钮
 
@@ -27,6 +25,14 @@
       }  
   }
 
+详细使用可见 Assets/XiaoCaoTools/Main/Editor/XC_ReadMe.cs
+
+<img src="https://github.com/smartgrass/XiaoCaoTools/blob/main/GitImages/win0.png" width= "400"/>
 
 
-详细使用可见Assets/XiaoCaoTools/Main/Editor/XC_ReadMe.cs
+
+其他窗口
+
+<img src="https://github.com/smartgrass/XiaoCaoTools/blob/main/GitImages/win1.png" width= "500"/>
+<img src="https://github.com/smartgrass/XiaoCaoTools/blob/main/GitImages/win2.png" width= "500"/>
+
