@@ -18,13 +18,13 @@ public class XiaoCaoEexample_Pro : XiaoCaoWindow
     public List<Object> assets;
     public string search;
 
-    [MenuItem("Tools/XiaoCao/Unity基本窗口查看")]
+    [MenuItem("Tools/XiaoCao/反射查看Unity窗口")]
     static void Open()
     {
         OpenWindow<XiaoCaoEexample_Pro>();
     }
 
-    [Button]
+    [Button("获取Unity基本窗口")]
     private void FindWindow()
     {
         string[] nameList = {
@@ -44,7 +44,7 @@ public class XiaoCaoEexample_Pro : XiaoCaoWindow
         }
     }
 
-    [Button()]
+    [Button("获取当前所有窗口")]
     private void FindAllWindow()
     {
         var wins = Resources.FindObjectsOfTypeAll<EditorWindow>();

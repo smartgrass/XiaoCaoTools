@@ -46,6 +46,7 @@ namespace NaughtyAttributes.Editor
                     ButtonAttribute att = ButtonAttributes[0] as ButtonAttribute;
                     if (!methodDic.ContainsKey(att.Pos))
                     {
+                        //nmae
                         methodDic.Add(att.Pos, new List<MethodInfo>() { item });
                         methPosSortList.Add(att.Pos);
                     }
@@ -69,7 +70,7 @@ namespace NaughtyAttributes.Editor
             GetSerializedProperties(ref _serializedProperties);
 
             bool anyNaughtyAttribute = _serializedProperties.Any(p => PropertyUtility.GetAttribute<INaughtyAttribute>(p) != null);
-            if (!anyNaughtyAttribute)
+            if (!anyNaughtyAttribute && methPosSortList.Count == 0)
             {
                 DrawDefaultInspector();
             }

@@ -33,10 +33,6 @@ public class XCLabelAttribute : PropertyAttribute
 {
     public string name;
 
-    /// <summary>
-    /// 使字段在Inspector中显示自定义的名称。
-    /// </summary>
-    /// <param name="name">自定义名称</param>
     public XCLabelAttribute(string name)
     {
         this.name = name;
