@@ -8,7 +8,7 @@
 
 
 如定义简单窗口 带一个按钮
-
+```
   public class XiaoCaoEexample_1 : XiaoCaoWindow
   {
       [MenuItem("Tools/XiaoCao/Eexample_1")]
@@ -24,14 +24,15 @@
           unityEvent?.Invoke();
       }  
   }
+ ```
 
-详细使用可见 Assets/XiaoCaoTools/Main/Editor/XC_ReadMe.cs
 
-<img src="https://github.com/smartgrass/XiaoCaoTools/blob/main/GitImages/win0.png" width= "400"/>
-
+<img src="https://github.com/smartgrass/XiaoCaoTools/blob/main/GitImages/win0.png" width= "350"/>
 
 
 其他窗口
+
+详细使用可见 Assets/XiaoCaoTools/Main/Editor/XC_ReadMe.cs
 
 <img src="https://github.com/smartgrass/XiaoCaoTools/blob/main/GitImages/win1.png" width= "500"/>
 <img src="https://github.com/smartgrass/XiaoCaoTools/blob/main/GitImages/win2.png" width= "500"/>
