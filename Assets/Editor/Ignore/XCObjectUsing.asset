@@ -12,4 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d3fbaf3fd89ebf459e1aa1b2449f337, type: 3}
   m_Name: XCObjectUsing
   m_EditorClassIdentifier: 
-  ObjectList: []
+  ObjectList:
+  - {fileID: 102900000, guid: cc353eab0acc513458ba4a8d7dc2159c, type: 3}
+  - {fileID: 5681057802322775587, guid: baf4e648e34176d4bbc2062cc02687ae, type: 3}
+  - {fileID: 4900000, guid: 4106612bda3fd1d4a9e4264213bb6bc1, type: 3}
