@@ -1,4 +1,8 @@
 ﻿{
-  "Name": null,
-  "intlist": null
+  "Name": "Xiaocao",
+  "typeA": 0,
+  "intlist": [
+    1,
+    2
+  ]
 }
