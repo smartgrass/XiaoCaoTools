@@ -2,29 +2,29 @@
 
 用于Unity快速搭建编辑器窗口 
 
-基于开源项目[NaughtyAttributes](https://github.com/dbrizov/NaughtyAttributes) 改写 
+本项目基于[NaughtyAttributes](https://github.com/dbrizov/NaughtyAttributes) 开发
  
+# 演示 
 
-
-如定义简单窗口 带一个按钮
+## 一个简单窗口
 ```
-  public class XiaoCaoEexample_1 : XiaoCaoWindow
-  {
-      [MenuItem("Tools/XiaoCao/Eexample_1")]
-      static void Open()
-      {
-          OpenWindow<XiaoCaoEexample_1>("窗口名字");
-      }
+public class XiaoCaoEexample_0 : XiaoCaoWindow
+{
+    [MenuItem("Tools/XiaoCao/Eexample_0")]
+    static void Open()
+    {
+        OpenWindow<XiaoCaoEexample_0>("窗口名字");
+    }
+    public string str;
 
-      [Button("执行事件")]
-      private void DoUnityEvent()
-      {
-          Debug.Log($"yns do Event");
-      }  
-  }
+    [Button("执行事件")]
+    private void DoEvent()
+    {
+        Debug.Log($"yns do Event");
+    }
+}
  ```
 
-效果如下 :
 
 <img src="https://github.com/smartgrass/XiaoCaoTools/blob/main/GitImages/win0.png" width= "350"/>
 
