@@ -24,7 +24,7 @@
   }
  ```
 
-下图为以上代码的效果:
+效果如下 :
 
 <img src="https://github.com/smartgrass/XiaoCaoTools/blob/main/GitImages/win0.png" width= "350"/>
 
