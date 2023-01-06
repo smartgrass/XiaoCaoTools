@@ -18,5 +18,4 @@ public class XiaoCaoEexample_0 : XiaoCaoWindow
     {
         Debug.Log($"yns do Event");
     }
-
 }
