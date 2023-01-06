@@ -26,7 +26,7 @@ public class XiaoCaoEexample_0 : XiaoCaoWindow
  ```
 
 
-<img src="https://github.com/smartgrass/XiaoCaoTools/blob/main/GitImages/win0.png" width= "350"/>
+<img src="https://github.com/smartgrass/XiaoCaoTools/blob/main/GitImages/win0.png" width= "400"/>
 
 
 
