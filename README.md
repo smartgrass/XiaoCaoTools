@@ -52,5 +52,7 @@
 
 <img src="https://github.com/smartgrass/XiaoCaoTools/blob/main/GitImages/win2.png" width= "450"/>
 
-### 3. 其他详细案例 [XC_ReadMe.cs](https://github.com/smartgrass/XiaoCaoTools/blob/main/Assets/XiaoCaoTools/Main/Editor/XC_ReadMe.cs)
+### 3. Json可视化编辑 [XiaoCaoJsonWin.cs](https://github.com/smartgrass/XiaoCaoTools/blob/main/Assets/XiaoCaoTools/Main/Editor/XiaoCaoJsonWin.cs)
+
+### 4. 其他小功能 [XC_ReadMe.cs](https://github.com/smartgrass/XiaoCaoTools/blob/main/Assets/XiaoCaoTools/Main/Editor/XC_ReadMe.cs)
 
