@@ -1,14 +1,8 @@
 ﻿using NaughtyAttributes;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 using XiaoCao;
-using Object = UnityEngine.Object;
 
 public class XiaoCaoEexample_0 : XiaoCaoWindow
 {
@@ -17,6 +11,7 @@ public class XiaoCaoEexample_0 : XiaoCaoWindow
     {
         OpenWindow<XiaoCaoEexample_0>("窗口名字");
     }
+    public string str;
 
     [Button("执行事件")]
     private void DoEvent()

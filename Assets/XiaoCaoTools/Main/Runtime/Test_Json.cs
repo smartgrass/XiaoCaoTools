@@ -7,6 +7,8 @@ public class Test_JsonA
     [XCLabel("名字")]
     public string Name;
 
+    public TestEnumA typeA;
+
     public int[] intlist;
 
 }
