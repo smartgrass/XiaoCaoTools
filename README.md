@@ -20,7 +20,6 @@
       private void DoUnityEvent()
       {
           Debug.Log($"yns do Event");
-          unityEvent?.Invoke();
       }  
   }
  ```
