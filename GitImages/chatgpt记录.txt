@@ -1,0 +1,11 @@
+我想在一个文本中, 截取以"Assets"开头,并且以".Prefab"结尾的字符串, 如何写正则表达式呢?
+Assets[^\s]*\.prefab
+
+在三位空间中,过A、B两个点,绘制一条正弦弧线,如何用C#实现?
+//由于绘制的曲线要在垂直方向上,所以只保留ScaleY
+float x =(float)(xA + t * (xB - xA)); 
+float y =(float)(yA + t * (yB - yA) + ScaleY* Math.Sin(omega*Mathf.PI * t));
+float z =(float)(zA + t * (zB - zA));
+
+
+格式化输出浮点：
