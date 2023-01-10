@@ -1,5 +1,15 @@
-我想在一个文本中, 截取以"Assets"开头,并且以".Prefab"结尾的字符串, 如何写正则表达式呢?
+问题收集:
+1.正则表达式
+
+2.已知两点绘制正弦曲线
+
+3.编写简单Html
+
+4.使用c#，如何获取文件夹内所有文件的路径？
+
+1.我想在一个文本中, 截取以"Assets"开头,并且以".Prefab"结尾的字符串, 如何写正则表达式呢?
 Assets[^\s]*\.prefab
+
 
 在三位空间中,过A、B两个点,绘制一条正弦弧线,如何用C#实现?
 //由于绘制的曲线要在垂直方向上,所以只保留ScaleY
@@ -9,3 +19,38 @@ float z =(float)(zA + t * (zB - zA));
 
 
 格式化输出浮点：
+
+
+
+如何写一个简单的html，带一个按钮,当点击按钮时，使用网络连接url获取图片并显示
+//路径我找了有个测试
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Page</title>
+  </head>
+  <body>
+    <button id="submit-button">Get Image</button>
+    <img id="image" />
+    <script>
+      document.getElementById("submit-button").addEventListener("click", function() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://i0.hdslb.com/bfs/face/8ff7ef6aa2e586c17b34ffc8db7d46a535750950.jpg@240w_240h_1c_1s.webp");
+        xhr.responseType = "blob";
+        xhr.onload = function() {
+          var img = document.getElementById("image");
+          img.src = URL.createObjectURL(xhr.response);};
+xhr.send();
+});
+</script>
+  </body>
+</html>
+
+4.使用c#，如何获取文件夹内所有文件的路径？
+//获取, 但不包括子问价夹
+string[] filePaths = Directory.GetFiles(@"C:\myfolder");
+//包括子文件夹
+string[] filePaths = Directory.GetFiles(@"C:\myfolder", "*", SearchOption.AllDirectories);
+//包括子文件夹 并且 筛选.txt扩展名
+string[] filePaths = Directory.GetFiles(@"C:\myfolder", "*.txt", SearchOption.AllDirectories);
