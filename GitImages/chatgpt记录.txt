@@ -7,11 +7,23 @@
 
 4.使用c#，如何获取文件夹内所有文件的路径？
 
-1.我想在一个文本中, 截取以"Assets"开头,并且以".Prefab"结尾的字符串, 如何写正则表达式呢?
-Assets[^\s]*\.prefab
+5.1 使用unity开发游戏,如何截图当前屏幕?
+5.2 如果是在安卓端,如何将图片保存到相册?
+
+1.有一个字符串"这本书叫做《C#从入门到入土》..."，想截取"《"和"》"中间的字符串,如何写正则表达式呢?用C#实现
+
+string input = "这本书叫做《C#从入门到入土》...";
+string pattern = "《(.*?)》";
+Match match = Regex.Match(input, pattern);
+if (match.Success)
+{
+	Console.WriteLine(match.Groups[0].Value); //输出：《C#从入门到入土》
+	Console.WriteLine(match.Groups[1].Value); //输出：C#从入门到入土
+}
 
 
-在三位空间中,过A、B两个点,绘制一条正弦弧线,如何用C#实现?
+
+2.在三维空间中,过A、B两个点,绘制一条正弦弧线,如何用C#实现?
 //由于绘制的曲线要在垂直方向上,所以只保留ScaleY
 float x =(float)(xA + t * (xB - xA)); 
 float y =(float)(yA + t * (yB - yA) + ScaleY* Math.Sin(omega*Mathf.PI * t));
@@ -22,7 +34,7 @@ float z =(float)(zA + t * (zB - zA));
 
 
 
-如何写一个简单的html，带一个按钮,当点击按钮时，使用网络连接url获取图片并显示
+3.如何写一个简单的html，带一个按钮,当点击按钮时，使用网络连接url获取图片并显示
 //路径我找了有个测试
 
 <!DOCTYPE html>
@@ -54,3 +66,45 @@ string[] filePaths = Directory.GetFiles(@"C:\myfolder");
 string[] filePaths = Directory.GetFiles(@"C:\myfolder", "*", SearchOption.AllDirectories);
 //包括子文件夹 并且 筛选.txt扩展名
 string[] filePaths = Directory.GetFiles(@"C:\myfolder", "*.txt", SearchOption.AllDirectories);
+
+
+5.使用unity开发游戏,如何截图当前屏幕?
+
+public void CaptureScreenshot()
+{
+	string fileName = "Screenshot.png";
+	string filePath = Path.Combine(Application.persistentDataPath, fileName);
+	ScreenCapture.CaptureScreenshot(filePath);
+}
+或者
+public void CaptureScreenshot()
+{
+	int width = Screen.width;
+	int height = Screen.height;
+	Texture2D texture = new Texture2D(width, height, TextureFormat.RGB24, false);
+	texture.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+	texture.Apply();
+	byte[] bytes = texture.EncodeToPNG();
+	File.WriteAllBytes(Application.persistentDataPath + "/Screenshot.png", bytes);
+}
+{
+using UnityEngine;
+using System.IO;
+public class SaveToAndroidGallery : MonoBehaviour
+{
+    public void SaveToGallery(string filePath)
+    {
+        #if UNITY_ANDROID
+        AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+        AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+        AndroidJavaClass mediaScanner = new AndroidJavaClass("android.media.MediaScannerConnection");
+        AndroidJavaClass file = new AndroidJavaClass("java.io.File");
+
+        AndroidJavaObject fileObject = new AndroidJavaObject("java.io.File", filePath);
+        mediaScanner.CallStatic("scanFile", currentActivity, new object[2] { fileObject.Call<string>("getAbsolutePath"), "image/jpeg" }, null);
+
+        #endif
+    }
+}	
+}
+
