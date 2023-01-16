@@ -12,6 +12,8 @@
 
 1.有一个字符串"这本书叫做《C#从入门到入土》..."，想截取"《"和"》"中间的字符串,如何写正则表达式呢?用C#实现
 
+7.快排算法
+
 string input = "这本书叫做《C#从入门到入土》...";
 string pattern = "《(.*?)》";
 Match match = Regex.Match(input, pattern);
@@ -106,5 +108,53 @@ public class SaveToAndroidGallery : MonoBehaviour
         #endif
     }
 }	
+}
+
+[快排]{
+    public static void Main()
+    {
+        int[] arr = { 10, 80, 30, 90, 40, 50, 70 };
+        QuickSortAlgorithm(arr, 0, arr.Length - 1);
+        for (int i = 0; i < arr.Length; i++)
+            Console.Write(arr[i] + " ");
+    }
+
+    static void QuickSortAlgorithm(int[] arr, int low, int high)
+    {
+        if (low < high)
+        {
+            int pivotIndex = Partition(arr, low, high);
+
+            QuickSortAlgorithm(arr, low, pivotIndex);
+            QuickSortAlgorithm(arr, pivotIndex + 1, high);
+        }
+    }
+
+    static int Partition(int[] arr, int low, int high)
+    {
+        int pivot = arr[low];
+        int i = low - 1;
+        int j = high + 1;
+
+        while (true)
+        {
+            do
+            {
+                i++;
+            } while (arr[i] < pivot);
+
+            do
+            {
+                j--;
+            } while (arr[j] > pivot);
+
+            if (i >= j)
+                return j;
+
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+    }	
 }
 
