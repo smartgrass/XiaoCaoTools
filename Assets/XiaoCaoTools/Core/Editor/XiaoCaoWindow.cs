@@ -16,7 +16,9 @@ namespace XiaoCao
     public class XiaoCaoWindow : EditorWindow
     {
         private Vector2 m_ScrollPosition;
-        Editor editor = null;
+
+        private Editor editor = null;
+        public Editor Editor => editor;
 
         public static T OpenWindow<T>(string title = "") where T : XiaoCaoWindow
         {
