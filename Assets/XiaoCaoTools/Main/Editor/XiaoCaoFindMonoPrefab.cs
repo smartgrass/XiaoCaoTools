@@ -8,7 +8,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using XiaoCao;
 using Object = UnityEngine.Object;
-
+/// <summary>
+/// 根据输入的Mono类查找Asset中的预制体
+/// </summary>
 public class XiaoCaoFindMonoPrefab : XiaoCaoWindow
 {
 	[MenuItem("Tools/XiaoCao/Mono类预制体查找")]

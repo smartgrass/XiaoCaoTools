@@ -30,6 +30,10 @@ public class XC_ReadMe
     ///3.Json编辑窗口
     ///from <see cref="XiaoCaoJsonWin"/>
     ///打开位置: Tools/XiaoCao/Json编辑窗口
+    ///
+    ///4.Mono类预制体查找
+    ///from <see cref="XiaoCaoFindMonoPrefab"/>
+    ///打开位置: Tools/XiaoCao/Mono类预制体查找
 
 
     #region Log工具
