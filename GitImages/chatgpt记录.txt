@@ -1,4 +1,5 @@
 问题收集:
+
 1.正则表达式
 
 2.已知两点绘制正弦曲线
@@ -14,147 +15,43 @@
 
 7.快排算法
 
-string input = "这本书叫做《C#从入门到入土》...";
-string pattern = "《(.*?)》";
-Match match = Regex.Match(input, pattern);
-if (match.Success)
-{
-	Console.WriteLine(match.Groups[0].Value); //输出：《C#从入门到入土》
-	Console.WriteLine(match.Groups[1].Value); //输出：C#从入门到入土
-}
+
+问题收集2:
+1.音频截取
+如何使用代码将一个音频文件截取其中某一段?
+python版本:
+
+from pydub import AudioSegment
+#截取从10秒开始,30秒结束
+start_time = 10 * 1000 
+end_time = 30 * 1000 
+audio = AudioSegment.from_file("input.mp3", format="mp3")
+cropped_audio = audio[start_time:end_time]
+
+cropped_audio.export("output.mp3", format="mp3")
+
+2.视频截取
+命令行代码: (需要ffmpeg库)
+ffmpeg -i input.mp4 -ss 00:00:10 -to 00:00:30 -c copy output.mp4
+//同理ffmpeg库也可以处理音频
+ffmpeg -i input.mp3 -ss 00:00:10 -to 00:00:30 -c copy output.mp3
 
 
+3.图片分辨率处理
+如何使用代码将图片调整图片分辨率?
 
-2.在三维空间中,过A、B两个点,绘制一条正弦弧线,如何用C#实现?
-//由于绘制的曲线要在垂直方向上,所以只保留ScaleY
-float x =(float)(xA + t * (xB - xA)); 
-float y =(float)(yA + t * (yB - yA) + ScaleY* Math.Sin(omega*Mathf.PI * t));
-float z =(float)(zA + t * (zB - zA));
+命令行代码: (需要ImageMagick库) https://imagemagick.org/script/download.php#windows
+magick convert input.jpg -resize 400x300 output.jpg
 
+python版本 (Pillow库)
+from PIL import Image
+img = Image.open("input.jpg")
+img_resized = img.resize((400, 300))
+img_resized.save("output.jpg")
 
-格式化输出浮点：
-
-
-
-3.如何写一个简单的html，带一个按钮,当点击按钮时，使用网络连接url获取图片并显示
-//路径我找了有个测试
-
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>My Page</title>
-  </head>
-  <body>
-    <button id="submit-button">Get Image</button>
-    <img id="image" />
-    <script>
-      document.getElementById("submit-button").addEventListener("click", function() {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "https://i0.hdslb.com/bfs/face/8ff7ef6aa2e586c17b34ffc8db7d46a535750950.jpg@240w_240h_1c_1s.webp");
-        xhr.responseType = "blob";
-        xhr.onload = function() {
-          var img = document.getElementById("image");
-          img.src = URL.createObjectURL(xhr.response);};
-xhr.send();
-});
-</script>
-  </body>
-</html>
-
-4.使用c#，如何获取文件夹内所有文件的路径？
-//获取, 但不包括子问价夹
-string[] filePaths = Directory.GetFiles(@"C:\myfolder");
-//包括子文件夹
-string[] filePaths = Directory.GetFiles(@"C:\myfolder", "*", SearchOption.AllDirectories);
-//包括子文件夹 并且 筛选.txt扩展名
-string[] filePaths = Directory.GetFiles(@"C:\myfolder", "*.txt", SearchOption.AllDirectories);
-
-
-5.使用unity开发游戏,如何截图当前屏幕?
-
-public void CaptureScreenshot()
-{
-	string fileName = "Screenshot.png";
-	string filePath = Path.Combine(Application.persistentDataPath, fileName);
-	ScreenCapture.CaptureScreenshot(filePath);
-}
-或者
-public void CaptureScreenshot()
-{
-	int width = Screen.width;
-	int height = Screen.height;
-	Texture2D texture = new Texture2D(width, height, TextureFormat.RGB24, false);
-	texture.ReadPixels(new Rect(0, 0, width, height), 0, 0);
-	texture.Apply();
-	byte[] bytes = texture.EncodeToPNG();
-	File.WriteAllBytes(Application.persistentDataPath + "/Screenshot.png", bytes);
-}
-{
-using UnityEngine;
-using System.IO;
-public class SaveToAndroidGallery : MonoBehaviour
-{
-    public void SaveToGallery(string filePath)
-    {
-        #if UNITY_ANDROID
-        AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-        AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-        AndroidJavaClass mediaScanner = new AndroidJavaClass("android.media.MediaScannerConnection");
-        AndroidJavaClass file = new AndroidJavaClass("java.io.File");
-
-        AndroidJavaObject fileObject = new AndroidJavaObject("java.io.File", filePath);
-        mediaScanner.CallStatic("scanFile", currentActivity, new object[2] { fileObject.Call<string>("getAbsolutePath"), "image/jpeg" }, null);
-
-        #endif
-    }
-}	
-}
-
-[快排]{
-    public static void Main()
-    {
-        int[] arr = { 10, 80, 30, 90, 40, 50, 70 };
-        QuickSortAlgorithm(arr, 0, arr.Length - 1);
-        for (int i = 0; i < arr.Length; i++)
-            Console.Write(arr[i] + " ");
-    }
-
-    static void QuickSortAlgorithm(int[] arr, int low, int high)
-    {
-        if (low < high)
-        {
-            int pivotIndex = Partition(arr, low, high);
-
-            QuickSortAlgorithm(arr, low, pivotIndex);
-            QuickSortAlgorithm(arr, pivotIndex + 1, high);
-        }
-    }
-
-    static int Partition(int[] arr, int low, int high)
-    {
-        int pivot = arr[low];
-        int i = low - 1;
-        int j = high + 1;
-
-        while (true)
-        {
-            do
-            {
-                i++;
-            } while (arr[i] < pivot);
-
-            do
-            {
-                j--;
-            } while (arr[j] > pivot);
-
-            if (i >= j)
-                return j;
-
-            int temp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = temp;
-        }
-    }	
-}
-
+4.提取视频的音频
+命令行代码:
+aac格式输出
+ffmpeg -i input.mp4 -vn -acodec copy output.aac
+mp3格式输出
+ffmpeg -i input.mp4 -vn -acodec libmp3lame -b:a 192k output.mp3
