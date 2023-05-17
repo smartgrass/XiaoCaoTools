@@ -4,30 +4,30 @@ import os,sys,string,datetime,time,threading
 
 g_bStop = False
 class OutputLogThread(threading.Thread):
-    m_logFilePath = ''
-    def run(self):
-        global g_bStop
-        nPosRead = 0
-        fp = None
-        print('OutputLogThread Start')
-        while g_bStop == False:
-            if os.path.isfile(self.m_logFilePath):
-                if fp == None:
-                    fp = open(self.m_logFilePath, 'r')
+	m_logFilePath = ''
+	def run(self):
+		global g_bStop
+		nPosRead = 0
+		fp = None
+		print('OutputLogThread Start')
+		while g_bStop == False:
+			if os.path.isfile(self.m_logFilePath):
+				fp = open(self.m_logFilePath, 'r')
 
-            if fp != None:
-                fp.seek(nPosRead)
-                allLines = fp.readlines()
-                nPosRead = fp.tell()
-                fp.close()
-                fp = None
-                for lines in allLines:
-                    print(lines)
-            time.sleep(5)
+		if fp != None:
+			fp.seek(nPosRead)
+			allLines = fp.readlines()
+			nPosRead = fp.tell()
+			fp.close()
+			fp = None
+			for lines in allLines:
+				print(lines)
+		time.sleep(5)
 
-    def __init__(self, logPath):
-        threading.Thread.__init__(self)
-        self.m_logFilePath = logPath
+	def __init__(self, logPath):
+		threading.Thread.__init__(self)
+		self.m_logFilePath = logPath
+
 
 if __name__ == '__main__':
 	if len(sys.argv) < 2:
@@ -47,4 +47,6 @@ if __name__ == '__main__':
 	print('g_bStop true')
 	g_bStop = True
 	print('logThread.join')
-	logThread.join()
+	#logThread.join()
+
+
