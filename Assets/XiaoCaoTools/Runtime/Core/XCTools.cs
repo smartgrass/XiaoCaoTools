@@ -479,7 +479,37 @@ public static class MathLayoutTool
 {
     //直线排列,矩形排列, 圆形排列
     
+    
+    //→ 逆时针, 90度正上方
+    public static Vector2 AngleToVector(float angleInDegrees)
+    {
+        double angleInRadians = angleInDegrees * (Math.PI / 180.0f);
+        double xComponent = Math.Cos(angleInRadians);
+        double yComponent = Math.Sin(angleInRadians);
+
+        return new Vector2((float)xComponent, (float)yComponent);
+    }
+    
+    static float GetAngleFromVector(Vector2 vector)
+    {
+        // 计算向量相对于 x 轴的角度（弧度）
+        double angleRadians = Math.Atan2(vector.y, vector.x);
+
+        // 将弧度转换为角度
+        double angleDegrees = angleRadians * 180.0 / Math.PI;
+
+        // 确保角度在 0 到 360 范围内
+        if (angleDegrees < 0)
+        {
+            angleDegrees += 360;
+        }
+
+        return (float)angleDegrees;
+    }
+    
 }
+
+
 
 public static class MathTool
 {
