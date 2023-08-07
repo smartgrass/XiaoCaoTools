@@ -11,6 +11,8 @@ using System.Reflection;
 using UnityEditor;
 #endif
 
+//MathLayoutTool
+
 public static class StringTool
 {
     public static string LogStr(this string str,string title = "Log")
@@ -20,13 +22,13 @@ public static class StringTool
         return str;
     }
 
-    public static string IELogListStr(this IList IEStrs, string title = "" ,bool isLog = true)
+    public static string IELogListStr(this IList ieStr, string title = "" ,bool isLog = true)
     {
         string res = "";
         int i = 0;
-        foreach (var item in IEStrs)
+        foreach (var item in ieStr)
         {
-            res += item.ToString() + ",";
+            res += item + ",";
             i++;
             if (i % 10 == 0)
             {
@@ -40,20 +42,20 @@ public static class StringTool
         return end;
     }
 
-    public static void IELogStr(this IEnumerable IEStrs, string title = "Log")
+    public static void IELogStr(this IEnumerable ieStr, string title = "Log")
     {
-        if (IEStrs == null)
+        if (ieStr == null)
         {
             Debug.Log($"yns IELogStr null");
             return;
         }
         string res = "";
         int i = 0;
-        foreach (var item in IEStrs)
+        foreach (var item in ieStr)
         {
             if (item != null)
             {
-                res += item.ToString() + "\n";
+                res += item + "\n";
             }
             else
             {
@@ -71,7 +73,7 @@ public static class StringTool
         return string.IsNullOrEmpty(str);
     }
 
-    public static int ToAnimtorHash(this string name)
+    public static int ToAnimatorHash(this string name)
     {
         return Animator.StringToHash(name);
     }
@@ -429,10 +431,10 @@ public static class FileTool
         return res;
     }
     //下载Url内容
-    public static string DownloadUrlText(string url,string localfilePath)
+    public static string DownloadUrlText(string url,string localFilePath)
     {
         string str = ReadFileWebUrl(url);
-        WriteToFile(str, localfilePath);
+        WriteToFile(str, localFilePath);
         return str;
     }
 
@@ -471,6 +473,12 @@ public static class FileTool
         return t;
     }
 
+}
+
+public static class MathLayoutTool
+{
+    //直线排列,矩形排列, 圆形排列
+    
 }
 
 public static class MathTool
@@ -582,12 +590,12 @@ public static class EditorStringTool
             return str;
         }
     }
-    //将Asset路径转为RessourecePath
+    //将Asset路径转为ResourcePath
     public static string AssetPathToResPath(this string path)
     {
         if (string.IsNullOrEmpty(path))
         {
-            Debug.Log("yns effect path empty!");
+            Debug.Log("yns path empty!");
             return "";
         }
         string str = path.RemoveHead("Assets/Resources/");
