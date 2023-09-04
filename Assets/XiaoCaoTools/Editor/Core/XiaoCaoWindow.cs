@@ -22,7 +22,7 @@ namespace XiaoCao
 
         public static T OpenWindow<T>(string title = "") where T : XiaoCaoWindow
         {
-            if (title.IsEmpty())
+            if (string.IsNullOrEmpty(title))
             {
                 title = typeof(T).Name;
             }

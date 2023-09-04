@@ -42,7 +42,7 @@ public class XC_ReadMe
     ///1.string扩展方法 <see cref="StringTool.LogStr"/> 
     ///使用：str.LogStr() 相当于 Debug.Log(str);
     ///
-    ///2.数组Log <see cref="StringTool.IELogListStr"/> 
+    ///2.数组Log <see cref="StringTool.LogListStr"/> 
     ///使用：list.IELogListStr() ，就不用自己写一遍遍历了
     ///
     ///3.任意类Log <see cref="LogToStringTool.LogObjectAll"/> 

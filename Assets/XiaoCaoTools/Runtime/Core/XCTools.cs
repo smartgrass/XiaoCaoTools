@@ -12,292 +12,190 @@ using UnityEditor;
 #endif
 
 //MathLayoutTool
+///<see cref="MathLayoutTool"/>  排队  
+///<see cref="MathTool"/>    
+///<see cref=""/>  反射相关
+///<see cref="PlayerPrefsTool"/>  PlayerPrefs
+///<see cref="FileTool"/>  File IO相关
+///
+///
+///
+
+
+public static class MathLayoutTool 
+{
+
+    //直线排列,矩形排列, 圆形排列
+    public enum Alignment
+    {
+        Left,
+        Center,
+        Right
+    }
+
+    #region   矩形排列
+    
+    private const int objectWidth = 0;
+    private const int objectHeight = 0;
+    private const int spacingX = 10;
+    private const int spacingY = 10;
+    //矩形排列
+    public static Vector2Int GetRectPos(int xIndex, int yIndex, int xCount, Alignment alignment)
+    {
+        int startX = 0;
+        int startY = 0;
+        
+        startY = yIndex * (objectHeight + spacingY);
+        
+        int x = startX + xIndex * (objectWidth + spacingX);
+        switch (alignment)
+        {
+            case Alignment.Center:
+                x += (objectWidth - spacingX * (xCount - 1)) / 2;
+                break;
+            case Alignment.Right:
+                x += (objectWidth - spacingX) * (xCount - 1);
+                break;
+        }
+        //Left不需要任何处理
+        return new Vector2Int(x, startY);
+    }
+    
+    //空心矩形排列
+    public class RectangularArrangement
+    {
+        public static List<(int, int)> ArrangeObjects(int rectangleWidth, int rectangleHeight, int objectSize, int margin)
+        {
+            List<(int, int)> coordinates = new List<(int, int)>();
+
+            // Calculate the number of objects that can fit on each side
+            int objectsOnTop = (rectangleWidth - 2 * margin) / objectSize;
+            int objectsOnSide = (rectangleHeight - 2 * margin) / objectSize;
+
+            // Calculate the coordinates for each side
+            for (int i = 0; i < objectsOnTop; i++)
+            {
+                int x = margin + i * objectSize;
+                int y = margin;
+                coordinates.Add((x, y));
+            }
+
+            for (int i = 0; i < objectsOnSide; i++)
+            {
+                int x = rectangleWidth - margin - objectSize;
+                int y = margin + i * objectSize;
+                coordinates.Add((x, y));
+            }
+
+            for (int i = objectsOnTop - 1; i >= 0; i--)
+            {
+                int x = margin + i * objectSize;
+                int y = rectangleHeight - margin - objectSize;
+                coordinates.Add((x, y));
+            }
+
+            for (int i = objectsOnSide - 1; i > 0; i--)
+            {
+                int x = margin;
+                int y = margin + i * objectSize;
+                coordinates.Add((x, y));
+            }
+
+            return coordinates;
+        }
+    }
+
+    
+    #endregion
+    
+    /// <summary>
+    ///  角度转二维向量
+    ///  从正右方开始计算,逆时针,90度为正上方
+    /// </summary>
+    /// <param name="angleInDegrees"></param>
+    /// <returns></returns>
+    public static Vector2 AngleToVector(float angleInDegrees)
+    {
+        double angleInRadians = angleInDegrees * (Math.PI / 180.0f);
+        double xComponent = Math.Cos(angleInRadians);
+        double yComponent = Math.Sin(angleInRadians);
+
+        return new Vector2((float)xComponent, (float)yComponent);
+    }
+    /// <summary>
+    /// 二维向量转角度
+    /// </summary>
+    /// <param name="vector"></param>
+    /// <returns></returns>
+    static float GetAngleFromVector(Vector2 vector)
+    {
+        // 计算向量相对于 x 轴的角度（弧度）
+        double angleRadians = Math.Atan2(vector.y, vector.x);
+
+        // 将弧度转换为角度
+        double angleDegrees = angleRadians * 180.0 / Math.PI;
+
+        // 确保角度在 0 到 360 范围内
+        if (angleDegrees < 0)
+        {
+            angleDegrees += 360;
+        }
+
+        return (float)angleDegrees;
+    }
+    
+}
+
+
+public static class MathTool
+{
+    public static Vector3 ChageDir(Vector3 dir, float angle)
+    {
+        if (angle == 0)
+            return dir;
+        //angle旋转角度 axis围绕旋转轴 position自身坐标 自身坐标 center旋转中心
+        //Quaternion.AngleAxis(angle, axis) * (position - center) + center;
+        return Quaternion.AngleAxis(angle, Vector3.up) * (dir);
+    }
+
+    //先慢后快 t -> [0,1]
+    public static float RLerp(float start,float end,float t)
+    {
+        return (end - start) * t;
+    }
+}
 
 public static class StringTool
 {
     public static string LogStr(this string str,string title = "Log")
     {
-        if(!str.IsEmpty())
+        if(!string.IsNullOrEmpty(str))
             Debug.LogFormat("{0}: {1}",title ,str);
         return str;
     }
 
-    public static string IELogListStr(this IList ieStr, string title = "" ,bool isLog = true)
+    public static string LogListStr(this IList ieStr, string title = "" ,bool isLog = true)
     {
+        int len = ieStr.Count;
         string res = "";
-        int i = 0;
-        foreach (var item in ieStr)
+        for (int j = 0; j < len; j++)
         {
-            res += item + ",";
-            i++;
-            if (i % 10 == 0)
-            {
-                res += "\n";
-            }
+            res += ieStr[j].ToString();
+            res += res + ",";
         }
-        title += " (len = " + i + ")\n";
+        title += " (len = " + len + ")\n";
         string end = string.Format("{0}{1}", title, res);
         if (isLog)
             Debug.Log(end);
         return end;
     }
-
-    public static void IELogStr(this IEnumerable ieStr, string title = "Log")
-    {
-        if (ieStr == null)
-        {
-            Debug.Log($"yns IELogStr null");
-            return;
-        }
-        string res = "";
-        int i = 0;
-        foreach (var item in ieStr)
-        {
-            if (item != null)
-            {
-                res += item + "\n";
-            }
-            else
-            {
-                res += "null\n";
-            }
-            i++;
-        }
-        title += ": " + i + "\n";
-        Debug.LogFormat("{0}{1}", title, res);
-    }
-
-
-    public static bool IsEmpty(this string str)
-    {
-        return string.IsNullOrEmpty(str);
-    }
-
+    
     public static int ToAnimatorHash(this string name)
     {
         return Animator.StringToHash(name);
     }
 
 }
-
-public static class LogToStringTool
-{
-
-    public enum EnumTypeType
-    {
-        Object,
-        Value,
-        ToJson,
-        IList, //Or Array
-        IDic
-    }
-
-    private static ReflectionTypes types;
-
-    public static ReflectionTypes Types
-    {
-        get
-        {
-            if (types == null)
-                types = new ReflectionTypes();
-            return types;
-        }
-    }
-
-    public class ReflectionTypes
-    {
-        public Type _string = typeof(string);
-        public Type ValueType = typeof(ValueType);
-        public Type ScriptableObject = typeof(ScriptableObject);
-        public Type Enum = typeof(Enum);
-        public Type IDictionary = typeof(IDictionary);
-        public Type IList = typeof(IList);
-    }
-
-    public static EnumTypeType GetTypeType(Type type)
-    {
-        if (type == Types._string || type.IsSubclassOf(Types.ValueType)
-            || type.IsSubclassOf(Types.Enum))
-        {
-            return EnumTypeType.Value;
-        }
-        else if (Types.IList.IsAssignableFrom(type) || type.IsArray)
-        {
-            return EnumTypeType.IList;
-        }
-        else if (Types.IDictionary.IsAssignableFrom(type))
-        {
-            return EnumTypeType.IDic;
-        }//type.IsSerializable 属性是ToJson不了的
-        else if (type.IsSubclassOf(Types.ScriptableObject) || (type.GetCustomAttribute<System.SerializableAttribute>()!=null && type.GetFields().Length >1 ))
-        {
-            return EnumTypeType.ToJson;
-        }
-
-        return EnumTypeType.Object;
-    }
-
-    public static string GetGenArgumentStr(Type type)
-    {
-        StringBuilder typesName = new StringBuilder(4);
-        foreach (var item in type.GetGenericArguments())
-        {
-            typesName.Append(item.Name).Append(",");
-        }
-        typesName.Remove(typesName.Length - 1, 1);
-        return typesName.ToString();
-    }
-
-    public static string GetObjString(object targetObj, Type type)
-    {
-        var typetype = GetTypeType(type);
-        //typetype.ToString().LogStr();
-        if (typetype == EnumTypeType.Value)
-        {
-            return (type.Name + " " + targetObj);
-        }
-        else if (typetype == EnumTypeType.ToJson)
-        {
-            return type.Name + "_" + (JsonUtility.ToJson(targetObj));
-        }
-        else if (typetype == EnumTypeType.IList)
-        {
-            var items = targetObj as IList;
-            string title = type.IsGenericType ? $"List<{GetGenArgumentStr(type)}>" : $"{type.GetElementType()}[]";
-            return items.IELogListStr(title, isLog: false);
-        }
-        else if (typetype == EnumTypeType.IDic)
-        {
-            StringBuilder sb = new StringBuilder(4);
-            var items = targetObj as IDictionary;
-
-            sb.Append("dic ").Append(GetGenArgumentStr(type)).Append(type.Name).Append("  ").Append(items.Count).Append("\n");
-
-            foreach (var key in items.Keys)
-            {
-                sb.Append(key).Append(": ").Append(items[key]).Append("\n");
-            }
-            return sb.ToString();
-        }
-        return "";
-    }
-
-    public static void LogObjectAll(object targetObj, Type type, int deep = 1, string proName = "")
-    {
-        bool isStatic = targetObj == null;
-
-        if (!isStatic)
-        {
-            var typetype = GetTypeType(type);
-            if (typetype != EnumTypeType.Object && deep ==1)
-            {
-                if (proName.IsEmpty())
-                {
-                    proName = "Value";
-                }
-
-                GetObjString(targetObj, type).LogStr(typetype.ToString() + "_" +proName);
-                return;
-            }
-        }
-
-        Type ot = typeof(ObsoleteAttribute);
-        var pros = isStatic ? type.GetProperties(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public) : type.GetProperties();
-
-        //pros
-        foreach (var pro in pros)
-        {
-            //if(pro.ReflectedType)
-            var attributes = pro.GetCustomAttributes(ot, true);
-            bool isOb = attributes.Length > 0;
-            if (isOb)
-            {
-                continue;
-            }
-
-            object curValue = null;
-            try
-            {
-                curValue = pro.GetValue(targetObj);
-
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning(pro.Name + "  error " + e);
-                continue;
-            }
-            if (curValue == null)
-            {
-                Debug.LogWarning(pro.Name + "  curValue null ");
-                continue;
-            }
-
-            Type baseType = pro.PropertyType;
-
-            var typetype = GetTypeType(baseType);
-
-            if (baseType.IsGenericType || baseType.IsArray)
-            {
-                if (typetype != EnumTypeType.Object)
-                    GetObjString(curValue, baseType).LogStr(pro.Name);
-                continue;
-            }
-
-
-            if (curValue != null)
-            {
-                if (deep > 0)
-                {
-                    if (typetype == EnumTypeType.Object)
-                        Debug.Log($">>>deep{deep} {type}.{pro.Name} t:{baseType} value:{curValue}");
-                    LogObjectAll(curValue, baseType, deep - 1, pro.Name);
-                }
-            }
-        }
-
-        //Field
-        foreach (var pro in type.GetFields())
-        {
-            var attributes = pro.GetCustomAttributes(ot, true);
-            bool isOb = attributes.Length > 0;
-            if (isOb)
-            {
-                continue;
-            }
-
-            var curValue = pro.GetValue(targetObj);
-
-            if (curValue == null)
-            {
-                Debug.LogWarning(pro.Name + "  curValue null ");
-                return;
-            }
-
-            Type baseType = pro.FieldType;
-
-            var typetype = GetTypeType(baseType);
-
-            if (baseType.IsGenericType || baseType.IsArray)
-            {
-                if (typetype != EnumTypeType.Object)
-                    GetObjString(curValue, baseType).LogStr(pro.Name);
-                continue;
-            }
-
-            if (curValue != null)
-            {
-                if (deep > 0)
-                {
-                    if (typetype == EnumTypeType.Object)
-                        Debug.Log($">>>deep{deep} {type}.{pro.Name} t:{baseType} value:{curValue}");
-                    LogObjectAll(curValue, baseType, deep - 1, pro.Name);
-                }
-            }
-        }
-    }
-
-}
-
 
 public static class PlayerPrefsTool
 {
@@ -322,12 +220,16 @@ public static class PlayerPrefsTool
     }
 }
 
+
+public static class PathTool
+{
+}
+
 public static class FileTool
 {
     public static void OpenDir(string path ,bool isAssetPath = false)
     {
 #if UNITY_EDITOR
-
         EditorUtility.RevealInFinder(CheckUpperDir(path));     
 #endif
     }
@@ -475,53 +377,6 @@ public static class FileTool
 
 }
 
-public static class MathLayoutTool
-{
-    //直线排列,矩形排列, 圆形排列
-    
-    
-    //→ 逆时针, 90度正上方
-    public static Vector2 AngleToVector(float angleInDegrees)
-    {
-        double angleInRadians = angleInDegrees * (Math.PI / 180.0f);
-        double xComponent = Math.Cos(angleInRadians);
-        double yComponent = Math.Sin(angleInRadians);
-
-        return new Vector2((float)xComponent, (float)yComponent);
-    }
-    
-    static float GetAngleFromVector(Vector2 vector)
-    {
-        // 计算向量相对于 x 轴的角度（弧度）
-        double angleRadians = Math.Atan2(vector.y, vector.x);
-
-        // 将弧度转换为角度
-        double angleDegrees = angleRadians * 180.0 / Math.PI;
-
-        // 确保角度在 0 到 360 范围内
-        if (angleDegrees < 0)
-        {
-            angleDegrees += 360;
-        }
-
-        return (float)angleDegrees;
-    }
-    
-}
-
-
-
-public static class MathTool
-{
-    public static Vector3 ChageDir(Vector3 dir, float angle)
-    {
-        if (angle == 0)
-            return dir;
-        //angle旋转角度 axis围绕旋转轴 position自身坐标 自身坐标 center旋转中心
-        //Quaternion.AngleAxis(angle, axis) * (position - center) + center;
-        return Quaternion.AngleAxis(angle, Vector3.up) * (dir);
-    }
-}
 
 public static class TaskAsyncHelper
 {
