@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
-
+using UnityEditor.Experimental.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
 using XiaoCao;
@@ -262,7 +262,7 @@ public class EditorReferenceTools
     [MenuItem("Assets/Check/查找Sprite在当前的引用")]
     public static void FindPngInAll()
     {
-        SceneManagement.PrefabStage prefabStage = SceneManagement.PrefabStageUtility.GetCurrentPrefabStage();
+        PrefabStage prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
         if (prefabStage == null)
         {
             FindPngInGame();
