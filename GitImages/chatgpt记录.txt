@@ -18,6 +18,156 @@
 
 问题收集2:
 1.音频截取
+2.视频截取
+3.图片分辨率处理
+4.提取视频的音频
+5.视频截图
+6.视频截取GIF动图
+
+
+问题收集3 反射: 
+1.反射: 使用C#的反射, 如果判断一个Field的类型是List<T>的泛型?
+
+2.使用反射, 如何获得List<T>字段中T的类型?
+
+3.对于一个List<T>类型的对象, 如何通过反射获得它的长度?
+
+
+
+问题收集4：批命令bat
+{
+当前路径：%cd%
+当前bat文件路径：%~dp0
+使用:
+echo %cd%
+echo %0
+
+变量：
+
+
+获取数据：
+时间
+
+移动文件 / 复制
+::for /r %%a in (.\TMP2\*.txt) do copy %%a .\TMP
+
+使用批命令,如何删除文件夹中名字带"mat"的文件?
+
+打开文件/运行 // /绝对路径
+start /d"E:\Text" unity.txt
+
+
+[管理员模式启动]{
+%1 start "" mshta vbscript:CreateObject("Shell.Application").ShellExecute("cmd.exe","/c %~s0 ::","","runas",1)(window.close)&&exit
+}
+
+[管理员模式启动2]{
+@echo off  
+net.exe session 1>NUL 2>NUL && (
+    goto gotAdmin
+) || (
+    goto UACPrompt
+)
+   
+:UACPrompt  
+    echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs" 
+    echo UAC.ShellExecute "%~s0", "", "", "runas", 1 >> "%temp%\getadmin.vbs" 
+    "%temp%\getadmin.vbs" 
+    exit /B  
+   
+:gotAdmin  
+    if exist "%temp%\getadmin.vbs" ( del "%temp%\getadmin.vbs" )  
+ 
+:begin
+
+pause
+}
+
+等待时间
+
+压缩/解压 python
+
+//https://zhuanlan.zhihu.com/p/446337414
+
+}
+
+
+【问题收集3 反射和矩阵变换】{
+
+矩阵变换:
+Matrix4x4 rotationMatrix = QuaternionToMatrix(rotation);
+//世界坐标->局部坐标
+Vector3 localPosition = rotationMatrix.inverse.MultiplyPoint3x4(worldPosition);
+//世界方向->局部方向  
+Vector3 localDirection = rotationMatrix.inverse.MultiplyVector(worldDirection);
+
+
+rotation->euler 计算
+{
+Vector3 euler = new Vector3();
+
+float sinr_cosp = 2 * (transform.rotation.w * transform.rotation.x + transform.rotation.y * transform.rotation.z);
+float cosr_cosp = 1 - 2 * (transform.rotation.x * transform.rotation.x + transform.rotation.y * transform.rotation.y);
+euler.x = Mathf.Atan2(sinr_cosp, cosr_cosp) * Mathf.Rad2Deg;
+
+float sinp = 2 * (transform.rotation.w * transform.rotation.y - transform.rotation.z * transform.rotation.x);
+if (Mathf.Abs(sinp) >= 1)
+{
+    euler.y = Mathf.Sign(sinp) * 90;
+}
+else
+{
+    euler.y = Mathf.Asin(sinp) * Mathf.Rad2Deg;
+}
+
+float siny_cosp = 2 * (transform.rotation.w * transform.rotation.z + transform.rotation.x * transform.rotation.y);
+float cosy_cosp = 1 - 2 * (transform.rotation.y * transform.rotation.y + transform.rotation.z * transform.rotation.z);
+euler.z = Mathf.Atan2(siny_cosp, cosy_cosp) * Mathf.Rad2Deg;	
+}
+
+
+[向量旋转一定角度]{
+	
+	//绕xx轴旋转
+ public static Vector3 ChageDir(Vector3 dir, float angle)
+ {
+	 Quaternion.AngleAxis(angle, Vector3.up) * (dir);	
+ }
+
+//转向xx角度
+//对于任意点A(x,y)，A非原点，绕原点旋转θ角后点的坐标为：
+//(x*cosθ- y * sinθ, y*cosθ + x * sinθ)，
+public Vector3 RotateAngle(Vector3 dir,float angle)
+{
+   float x = Mathf.Cos(angle * Mathf.Deg2Rad)*dir.x - Mathf.Sin(angle * Mathf.Deg2Rad) *dir.z;
+   float z = Mathf.Cos(angle * Mathf.Deg2Rad) * dir.z + Mathf.Sin(angle * Mathf.Deg2Rad) * dir.x;
+	dir = new Vector3(x, 0, z);
+	return dir;
+}	
+
+}
+
+
+1.反射: 使用C#的反射, 如果判断一个Field的类型是List<T>的泛型?
+
+//IsGenericType 是否为泛型 , GetGenericTypeDefinition泛型类型
+if (fieldType.IsGenericType && fieldType.GetGenericTypeDefinition() == typeof(List<>))
+{
+    // 字段类型为 List<T> 的泛型类型，可以进行相应的处理
+}
+
+2.使用反射, 如何获得List<T>字段中T的类型?
+
+3.如果List<T>类型的对象, 如何通过反射获得它的长度?
+	Type listType = typeof(List<>);
+	Type intListType = listType.MakeGenericType(typeof(int));
+	object intListObj = Activator.CreateInstance(intListType);
+ PropertyInfo countProperty = intListType.GetProperty("Count");
+
+}
+
+
+1.音频截取
 如何使用代码将一个音频文件截取其中某一段?
 python版本:
 
@@ -33,6 +183,7 @@ cropped_audio.export("output.mp3", format="mp3")
 2.视频截取
 命令行代码: (需要ffmpeg库)
 ffmpeg -i input.mp4 -ss 00:00:10 -to 00:00:30 -c copy output.mp4
+//ffmpeg -i input.mp4 -ss 00:59:10 -to 02:58:00 -c copy output.mp4
 //同理ffmpeg库也可以处理音频
 ffmpeg -i input.mp3 -ss 00:00:10 -to 00:00:30 -c copy output.mp3
 
@@ -55,3 +206,87 @@ aac格式输出
 ffmpeg -i input.mp4 -vn -acodec copy output.aac
 mp3格式输出
 ffmpeg -i input.mp4 -vn -acodec libmp3lame -b:a 192k output.mp3
+
+
+5.截取视频的某一帧,保存为图片
+命令行:
+ffmpeg -i your_video_file_path.mp4 -ss 00:00:10.000 -vframes 1 your_image_file_path.jpg
+//-vframes 1：指定要截取的视频帧数量
+python: (需要opencv库)
+{
+import cv2
+
+# 指定视频文件路径
+video_file_path = 'your_video_file_path.mp4'
+# 指定要截取的帧数
+frame_number = 10
+# 指定保存的图片文件路径
+image_file_path = 'your_image_file_path.jpg'
+
+# 创建一个VideoCapture对象来读取视频文件
+video_capture = cv2.VideoCapture(video_file_path)
+
+# 使用VideoCapture对象的set方法设置要读取的帧数
+video_capture.set(cv2.CAP_PROP_POS_FRAMES, frame_number)
+
+# 使用VideoCapture对象的read方法读取帧
+ret, frame = video_capture.read()
+
+# 保存帧为图像文件
+cv2.imwrite(image_file_path, frame)
+
+# 释放资源
+video_capture.release()
+}
+
+C#: (需要库:AForge.Video.FFMPEG)
+{
+using System.Drawing;
+using System.Drawing.Imaging;
+using AForge.Video.FFMPEG; // 引用AForge.Video.FFMPEG库
+
+// 指定视频文件路径
+string videoFilePath = "your_video_file_path.mp4";
+// 指定要截取的帧数
+int frameNumber = 10;
+// 指定保存的图片文件路径
+string imageFilePath = "your_image_file_path.jpg";
+// 创建一个VideoFileReader对象来读取视频文件
+using (var videoReader = new VideoFileReader())
+{
+    videoReader.Open(videoFilePath);
+    // 获取视频的宽度和高度
+    int videoWidth = videoReader.Width;
+    int videoHeight = videoReader.Height;
+    // 创建一个Bitmap对象来保存截取的帧
+    Bitmap bitmap = new Bitmap(videoWidth, videoHeight, PixelFormat.Format24bppRgb);
+    // 使用VideoFileReader对象的ReadVideoFrame方法读取指定帧
+    VideoFrame frame = videoReader.ReadVideoFrame(frameNumber);
+    // 将帧绘制到Bitmap对象上
+    using (Graphics graphics = Graphics.FromImage(bitmap))
+    {
+        graphics.DrawImage(frame, Point.Empty);
+    }
+    // 保存Bitmap对象为图像文件
+    bitmap.Save(imageFilePath, ImageFormat.Jpeg);
+    // 释放资源
+    frame.Dispose();
+    bitmap.Dispose();
+}
+}
+
+
+如何截取视频转成gif:
+{
+1.首先，使用FFmpeg将视频截取成图像文件：
+ffmpeg -i test.mp4 -vf scale=320:-1 -r 10 image-%03d.png
+这个命令将视频文件“test.mp4”截取成一系列图像文件，每张图片的大小为320xXXX（根据原始视频文件的纵横比计算得出，保持宽高比），截取帧率为10fps，保存为PNG格式的图像文件，并以“image-001.png”、“image-002.png”等格式命名(%03d 表示一个三位整数)。
+
+}
+magick convert -delay 10 -loop 0 image-*.png your_gif_file_path.gif
+2.然后，使用ImageMagick将这些图像文件转换成GIF
+这个命令将图像文件“image-001.png”、“image-002.png”等转换成一个GIF文件，每帧的显示时间为10毫秒，循环播放次数为无限循环，保存为GIF格式的图像文件
+
+//ffmpeg -i from.webp to.gif
+
+这样,给这些小功能封装好,就可以做成一个剪辑小工具了

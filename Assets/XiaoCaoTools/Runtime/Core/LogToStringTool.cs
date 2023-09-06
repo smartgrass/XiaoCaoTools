@@ -1,4 +1,10 @@
 
+using System;
+using System.Collections;
+using System.Reflection;
+using System.Text;
+using UnityEngine;
+
 public static class LogToStringTool
 {
     public enum EnumTypeType
@@ -82,7 +88,7 @@ public static class LogToStringTool
         {
             var items = targetObj as IList;
             string title = type.IsGenericType ? $"List<{GetGenArgumentStr(type)}>" : $"{type.GetElementType()}[]";
-            return items.IELogListStr(title, isLog: false);
+            return items.LogListStr(title, isLog: false);
         }
         else if (typetype == EnumTypeType.IDic)
         {
@@ -109,7 +115,7 @@ public static class LogToStringTool
             var typetype = GetTypeType(type);
             if (typetype != EnumTypeType.Object && deep ==1)
             {
-                if (proName.IsEmpty())
+                if (string.IsNullOrEmpty(proName))
                 {
                     proName = "Value";
                 }

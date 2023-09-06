@@ -3,7 +3,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using ProtoBuf.Internal;
 
 namespace XiaoCao
 {
@@ -60,8 +59,8 @@ namespace XiaoCao
             if (type == typeof(Uri)) return ProtoTypeCode.Uri;
             if (type == typeof(byte[])) return ProtoTypeCode.ByteArray;
             if (type == typeof(ArraySegment<byte>)) return ProtoTypeCode.ByteArraySegment;
-            if (type == typeof(Memory<byte>)) return ProtoTypeCode.ByteMemory;
-            if (type == typeof(ReadOnlyMemory<byte>)) return ProtoTypeCode.ByteReadOnlyMemory;
+            //if (type == typeof(Memory<byte>)) return ProtoTypeCode.ByteMemory;
+            //if (type == typeof(ReadOnlyMemory<byte>)) return ProtoTypeCode.ByteReadOnlyMemory;
             if (type == typeof(Type)) return ProtoTypeCode.Type;
             if (type == typeof(IntPtr)) return ProtoTypeCode.IntPtr;
             if (type == typeof(UIntPtr)) return ProtoTypeCode.UIntPtr;
@@ -76,7 +75,7 @@ namespace XiaoCao
             if (method is null && !nonPublic && allowInternal)
             { // could be "internal" or "protected internal"; look for a non-public, then back-check
                 method = property.GetGetMethod(true);
-                if (method is not null && !(method.IsAssembly || method.IsFamilyOrAssembly))
+                if (method !=null && !(method.IsAssembly || method.IsFamilyOrAssembly))
                 {
                     method = null;
                 }
@@ -92,7 +91,7 @@ namespace XiaoCao
             if (method is null && !nonPublic && allowInternal)
             { // could be "internal" or "protected internal"; look for a non-public, then back-check
                 method = property.GetGetMethod(true);
-                if (method is not null && !(method.IsAssembly || method.IsFamilyOrAssembly))
+                if (method!=null && !(method.IsAssembly || method.IsFamilyOrAssembly))
                 {
                     method = null;
                 }

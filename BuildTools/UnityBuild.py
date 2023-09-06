@@ -2,17 +2,19 @@
 # -*- coding: utf-8 -*-
 import os,sys,string,datetime,time,threading
 
+logFilePath = 'editor.txt'
 g_bStop = False
-class OutputLogThread(threading.Thread):
-	m_logFilePath = ''
-	def run(self):
-		global g_bStop
-		nPosRead = 0
-		fp = None
-		print('OutputLogThread Start')
-		while g_bStop == False:
-			if os.path.isfile(self.m_logFilePath):
-				fp = open(self.m_logFilePath, 'r')
+
+def LoopLog():
+	m_logFilePath = logFilePath
+	global g_bStop
+	nPosRead = 0
+	fp = None
+	print('OutputLogThread Start')
+	while(g_bStop == False):
+		if os.path.isfile(m_logFilePath):
+			if(fp==None):
+				fp = open(m_logFilePath, 'r')
 
 		if fp != None:
 			fp.seek(nPosRead)
@@ -22,18 +24,13 @@ class OutputLogThread(threading.Thread):
 			fp = None
 			for lines in allLines:
 				print(lines)
-		time.sleep(5)
-
-	def __init__(self, logPath):
-		threading.Thread.__init__(self)
-		self.m_logFilePath = logPath
+		time.sleep(4)
 
 
-if __name__ == '__main__':
+def Run():
 	if len(sys.argv) < 2:
 		print('not find unity path')
 		sys.exit(-1)
-	logFilePath = 'editor.txt'
 	unityRunParm = ''
 	for i in range(len(sys.argv)):
 		if i > 0:
@@ -41,12 +38,17 @@ if __name__ == '__main__':
 	unityRunParm += ' -logfile ' + logFilePath
 	if os.path.isfile(logFilePath):
 		os.remove(logFilePath)
-	logThread = OutputLogThread(logFilePath)
-	logThread.start()
+
+	t1 = threading.Thread(target=LoopLog,args=())
+	t1.start()
 	os.system(unityRunParm)
-	print('g_bStop true')
+	print('Stop!!!')
+	global g_bStop
 	g_bStop = True
-	print('logThread.join')
-	#logThread.join()
+	t1.join()
+	print('=======End=====')
+
+if __name__ == '__main__':
+	Run()
 
 
