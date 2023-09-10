@@ -13,7 +13,7 @@ namespace XiaoCao
     /// otherwise make the real code unnecessarily messy, providing fallback
     /// implementations if necessary.
     /// </summary>
-    internal static class Helpers
+    internal static class ReflectionHelpers
     {
         internal static MethodInfo GetInstanceMethod(Type declaringType, string name)
             => declaringType.GetMethod(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
@@ -141,15 +141,6 @@ namespace XiaoCao
             return members;
         }
 
-        internal static Type GetMemberType(MemberInfo member)
-        {
-            return member.MemberType switch
-            {
-                MemberTypes.Field => ((FieldInfo)member).FieldType,
-                MemberTypes.Property => ((PropertyInfo)member).PropertyType,
-                _ => null,
-            };
-        }
     }
     /// <summary>
     /// Intended to be a direct map to regular TypeCode, but:
