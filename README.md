@@ -3,6 +3,8 @@
 用于Unity快速搭建编辑器窗口 
 
 本项目基于[NaughtyAttributes](https://github.com/dbrizov/NaughtyAttributes) 开发
+
+需要Newtonsoft
  
 # 演示 
 
