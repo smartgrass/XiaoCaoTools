@@ -7,6 +7,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 #endif
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using XiaoCao;
 
@@ -14,41 +15,38 @@ using XiaoCao;
 
 public class XiaoCaoReferenceWindow2 : XiaoCaoWindow
 {
-    private static XiaoCaoReferenceWindow2 instance;
+    private static XiaoCaoReferenceWindow2 _instance;
     public static XiaoCaoReferenceWindow2 Instance
     {
         get
         {
-            if (instance == null)
+            if (_instance == null)
                 Open();
-            return instance;
+            return _instance;
         }
     }
 
     [MenuItem("Tools/XiaoCao/图片引用查询窗口2")]
     static void Open()
     {
-        instance = OpenWindow<XiaoCaoReferenceWindow2>("图片引用查询窗口2");
+        _instance = OpenWindow<XiaoCaoReferenceWindow2>("图片引用查询窗口2");
     }
 
     [Header("选中图片")]
     public List<Object> selects = new List<Object>();
-    private List<string> selectPngPaths = new List<string>();
+    private List<string> _selectPngPaths = new List<string>();
 
     [Header("预制体文件夹范围")]
-    public List<Object> checkFloder = new List<Object>();
+    public List<Object> checkFolder = new List<Object>();
 
 
     public List<Object> assets = new List<Object>();
-    private List<string> findPrefabPaths = new List<string>();
+    private List<string> _findPrefabPaths = new List<string>();
 
     public int lessTime = 0;
     public List<Object> unUseAsset = new List<Object>();
 
-    private List<string> AllAssetsPaths = new List<string>();
-    private List<string> RefPngPaths = new List<string>();
-
-    public Object MoveToDir;
+    public Object moveToDir;
 
     private void OnSelectionChange()
     {
@@ -73,12 +71,10 @@ public class XiaoCaoReferenceWindow2 : XiaoCaoWindow
     private void GetAllPrefab()
     {
         List<string> checkDirPaths = new List<string>();
-        foreach (var item in checkFloder)
+        foreach (var item in checkFolder)
         {
             checkDirPaths.Add(AssetDatabase.GetAssetPath(item));
         }
-        AllAssetsPaths.Clear();
-        RefPngPaths.Clear();
         string[] guids = AssetDatabase.FindAssets("t:GameObject", checkDirPaths.ToArray());
         List<string> paths = new List<string>();
         new List<string>(guids).ForEach(m => paths.Add(AssetDatabase.GUIDToAssetPath(m)));
@@ -86,14 +82,11 @@ public class XiaoCaoReferenceWindow2 : XiaoCaoWindow
         {
             if (!prefabUsingPngsDic.ContainsKey(p))
             {
-                AllAssetsPaths.Add(p);
                 var list = new string[] { p };
 
-                prefabUsingPngsDic.Add(p, EditorReferenceTools.GetPngDependeces(new List<string>(list)));
+                prefabUsingPngsDic.Add(p, EditorReferenceTools.GetPngDependencies(new List<string>(list)));
             }
         });
-        //获取所有Ref图片路径
-        //RefPngPaths = EditorReferenceTools.GetPngDependeces(AllAssetsPaths);
     }
 
     [Button("2查找图片引用")]
@@ -106,22 +99,22 @@ public class XiaoCaoReferenceWindow2 : XiaoCaoWindow
         prefabUsingPngsDic.Count.ToString().LogStr("Dic Count");
 
 
-        findPrefabPaths.Clear();
+        _findPrefabPaths.Clear();
         assets.Clear();
         Dictionary<string, int> HasUsingPngDic = new Dictionary<string, int>();
 
         //prefabUsingPngsDic["Assets/Resources/Prefabs/pop/SongBoxPop.prefab"].IELogListStr();
 
-        selectPngPaths = EditorReferenceTools.GetSelectsPath(selects.ToArray());
+        _selectPngPaths = EditorReferenceTools.GetSelectsPath(selects.ToArray());
 
-        foreach (var pngPath in selectPngPaths)
+        foreach (var pngPath in _selectPngPaths)
         {
             FindOnePngUsingPrefab(HasUsingPngDic, pngPath);
         }
 
         //return;
 
-        foreach (var item in findPrefabPaths)
+        foreach (var item in _findPrefabPaths)
         {
             assets.Add(AssetDatabase.LoadAssetAtPath<Object>(item));
         }
@@ -135,7 +128,7 @@ public class XiaoCaoReferenceWindow2 : XiaoCaoWindow
         if (HasUsingPngDic.Count > 0)
             LogToStringTool.LogObjectAll(HasUsingPngDic, HasUsingPngDic.GetType());
 
-        var unFindSprete = selectPngPaths.FindAll(p => !HasUsingPngDic.ContainsKey(p)
+        var unFindSprete = _selectPngPaths.FindAll(p => !HasUsingPngDic.ContainsKey(p)
         || HasUsingPngDic[p] <= lessTime);
 
 
@@ -145,9 +138,6 @@ public class XiaoCaoReferenceWindow2 : XiaoCaoWindow
             unUseAsset.Add(AssetDatabase.LoadAssetAtPath<Object>(item));
         }
 
-
-        //string[] allDependencies = AssetDatabase.GetDependencies(, true);
-        //allDependencies.IELogListStr();
     }
 
     private void FindOnePngUsingPrefab(Dictionary<string, int> HasUsingPngDic, string pngPath)
@@ -167,9 +157,9 @@ public class XiaoCaoReferenceWindow2 : XiaoCaoWindow
                     HasUsingPngDic[pngPath] = HasUsingPngDic[pngPath] + 1;
                 }
 
-                if (!findPrefabPaths.Contains(item.Key))
+                if (!_findPrefabPaths.Contains(item.Key))
                 {
-                    findPrefabPaths.Add(item.Key);
+                    _findPrefabPaths.Add(item.Key);
                 }
                 //continue;
             }
@@ -181,9 +171,9 @@ public class XiaoCaoReferenceWindow2 : XiaoCaoWindow
     private void MoveUnsing()
     {
         string newPath = "Assets/RawResources/UnUsingByToolFInd";
-        if (MoveToDir != null)
+        if (moveToDir != null)
         {
-            newPath = AssetDatabase.GetAssetPath(MoveToDir);
+            newPath = AssetDatabase.GetAssetPath(moveToDir);
         }
 
         var list = EditorReferenceTools.GetSelectsPath(unUseAsset.ToArray());
@@ -253,7 +243,6 @@ public class XiaoCaoReferenceWindow2 : XiaoCaoWindow
         {
             PrefabUtility.SaveAsPrefabAsset(prefabRoot, assetPath);
             PrefabUtility.UnloadPrefabContents(prefabRoot);
-            //AssetDatabase.SaveAssets();  	//ฑฃดๆธฤถฏตฤืสิด
         }
     }
 }
@@ -334,7 +323,7 @@ public class EditorReferenceTools
                 prefabList.Add(AssetDatabase.GetAssetPath(item));
             }
         }
-        GetPngDependeces(prefabList);
+        GetPngDependencies(prefabList);
     }
 
     public static List<string> GetSelectsPath(Object[] objects)
@@ -347,7 +336,7 @@ public class EditorReferenceTools
         return prefabList;
     }
 
-    public static List<string> GetPngDependeces(List<string> prefabList)
+    public static List<string> GetPngDependencies(List<string> prefabList)
     {
         string[] allDependencies = AssetDatabase.GetDependencies(prefabList.ToArray(), true);
         List<string> allPngDependecies = new List<string>();
@@ -360,18 +349,7 @@ public class EditorReferenceTools
         }
         return allPngDependecies;
     }
-
-    public static List<string> GetAllDependeces(List<string> prefabList)
-    {
-        string[] allDependencies = AssetDatabase.GetDependencies(prefabList.ToArray(), true);
-        List<string> allPngDependecies = new List<string>();
-        foreach (var item in allDependencies)
-        {
-            allPngDependecies.Add(item);
-        }
-        return allPngDependecies;
-    }
-
+    
     public static string[] KnowAllPicture(string dirFullPath)
     {
         List<string> liststring = new List<string>();
