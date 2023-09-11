@@ -59,3 +59,9 @@ sysinfo.txt
 crashlytics-build.properties
 
 /Assets/XiaoCaoTools/Plugin/Ignore**
+/ProjectSettings/MemorySettings.asset
+/ProjectSettings/boot.config
+/.idea/.idea.XiaoCaoTools/.idea/indexLayout.xml
+/.idea/.idea.XiaoCaoTools/.idea/vcs.xml
+/UserSettings/Layouts/default-2021.dwlt
+/.idea/.idea.XiaoCaoTools/.**
