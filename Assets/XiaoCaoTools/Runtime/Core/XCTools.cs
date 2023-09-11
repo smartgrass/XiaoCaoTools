@@ -1,46 +1,38 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using UnityEngine;
-using System.Reflection;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-//MathLayoutTool
-///<see cref="MathLayoutTool"/>  排队  
-///<see cref="MathTool"/>    
-///<see cref=""/>  反射相关
-///<see cref="PlayerPrefsTool"/>  PlayerPrefs
+//目录
+///<see cref="MathLayoutTool"/>  矩形排列, 圆形排列
+///<see cref="MathTool"/> 旋转角度相关   
+///<see cref="StringTool"/> 字符串截取相关   
+///<see cref="PathTool"/> 路径处理相关   
 ///<see cref="FileTool"/>  File IO相关
-///
-///
-///
+///<see cref="PlayerPrefsTool"/>  PlayerPrefs
+///<see cref="LogToStringTool"/> Log相关
 
 
+//矩形排列, TODO: 圆形排列
 public static class MathLayoutTool 
 {
-
-    //直线排列,矩形排列, 圆形排列
+    #region   矩形排列
     public enum Alignment
     {
         Left,
         Center,
         Right
     }
-
-    #region   矩形排列
-    
     private const int objectWidth = 0;
     private const int objectHeight = 0;
-    private const int spacingX = 10;
-    private const int spacingY = 10;
     //矩形排列
-    public static Vector2Int GetRectPos(int xIndex, int yIndex, int xCount, Alignment alignment)
+    public static Vector2Int GetRectPos(int xIndex, int yIndex, int xCount, Alignment alignment,int spacingX = 10,int spacingY = 10)
     {
         int startX = 0;
         int startY = 0;
@@ -108,48 +100,14 @@ public static class MathLayoutTool
     
     #endregion
     
-    /// <summary>
-    ///  角度转二维向量
-    ///  从正右方开始计算,逆时针,90度为正上方
-    /// </summary>
-    /// <param name="angleInDegrees"></param>
-    /// <returns></returns>
-    public static Vector2 AngleToVector(float angleInDegrees)
-    {
-        double angleInRadians = angleInDegrees * (Math.PI / 180.0f);
-        double xComponent = Math.Cos(angleInRadians);
-        double yComponent = Math.Sin(angleInRadians);
-
-        return new Vector2((float)xComponent, (float)yComponent);
-    }
-    /// <summary>
-    /// 二维向量转角度
-    /// </summary>
-    /// <param name="vector"></param>
-    /// <returns></returns>
-    static float GetAngleFromVector(Vector2 vector)
-    {
-        // 计算向量相对于 x 轴的角度（弧度）
-        double angleRadians = Math.Atan2(vector.y, vector.x);
-
-        // 将弧度转换为角度
-        double angleDegrees = angleRadians * 180.0 / Math.PI;
-
-        // 确保角度在 0 到 360 范围内
-        if (angleDegrees < 0)
-        {
-            angleDegrees += 360;
-        }
-
-        return (float)angleDegrees;
-    }
+    #region 圆形排列 TODO
     
+    #endregion
 }
-
 
 public static class MathTool
 {
-    public static Vector3 ChageDir(Vector3 dir, float angle)
+    public static Vector3 ChangeDir(Vector3 dir, float angle)
     {
         if (angle == 0)
             return dir;
@@ -163,99 +121,117 @@ public static class MathTool
     {
         return (end - start) * t;
     }
+    
+    //角度转二维向量
+    //从正右方开始计算,逆时针,90度为正上方
+    public static Vector2 AngleToVector(float angleInDegrees)
+    {
+        double angleInRadians = angleInDegrees * (Math.PI / 180.0f);
+        double xComponent = Math.Cos(angleInRadians);
+        double yComponent = Math.Sin(angleInRadians);
+
+        return new Vector2((float)xComponent, (float)yComponent);
+    }
+
+    //二维向量转角度
+    static float GetAngleFromVector(Vector2 vector)
+    {
+        // 计算向量相对于 x 轴的角度（弧度）
+        double angleRadians = Math.Atan2(vector.y, vector.x);
+        // 将弧度转换为角度
+        double angleDegrees = angleRadians * 180.0 / Math.PI;
+        // 确保角度在 0 到 360 范围内
+        if (angleDegrees < 0)
+        {
+            angleDegrees += 360;
+        }
+        return (float)angleDegrees;
+    }
 }
 
 public static class StringTool
 {
-    public static string LogStr(this string str,string title = "Log")
+    //匹配头尾中的内容
+    //如"abcd[xxx]efg",匹配[],输出"xxx"
+    //withSide为True 输出"[xxx]" 
+    public static string MatchSide(string input, string head, string end,bool withSide = false)
     {
-        if(!string.IsNullOrEmpty(str))
-            Debug.LogFormat("{0}: {1}",title ,str);
-        return str;
-    }
-
-    public static string LogListStr(this IList ieStr, string title = "" ,bool isLog = true)
-    {
-        int len = ieStr.Count;
-        string res = "";
-        for (int j = 0; j < len; j++)
+        //Regex.Escape 用于转义字符串中的正则表达式特殊字符，以确保这些字符被当作普通字符而不是正则表达式元字符来处理。
+        string pattern = $"{Regex.Escape(head)}(.*?){Regex.Escape(end)}";
+        Match match = Regex.Match(input, pattern);
+        if (match.Success)
         {
-            res += ieStr[j].ToString();
-            res += res + ",";
+            if (withSide)
+            {
+                return match.Groups[0].Value;
+            }
+            return match.Groups[1].Value;
         }
-        title += " (len = " + len + ")\n";
-        string end = string.Format("{0}{1}", title, res);
-        if (isLog)
-            Debug.Log(end);
-        return end;
+        return null;
     }
-    
-    public static int ToAnimatorHash(this string name)
+    //移除开头
+    public static string RemoveHead(this string str, string removeStr)
     {
-        return Animator.StringToHash(name);
+        if (str.StartsWith(removeStr))
+        {
+            return str.Remove(0, removeStr.Length);
+        }
+        else
+        {
+            Debug.LogError(str + "no StartsWith" + removeStr);
+            return str;
+        }
     }
-
-}
-
-public static class PlayerPrefsTool
-{
-
-    public static void SetIntKeyBool(this string key,bool isOn)
+    //移除结尾
+    public static string RemoveEnd(this string str, string removeStr)
     {
-        PlayerPrefs.SetInt(key,isOn?1:0);
-    }
-
-    public static void SetIntKeyNum(this string key, int num)
-    {
-        PlayerPrefs.SetInt(key, num);
-    }
-
-    public static int GetIntKeyNum(this string key)
-    {
-        return PlayerPrefs.GetInt(key,0);
-    }
-    public static string GetKeyStr(this string key)
-    {
-        return PlayerPrefs.GetString(key, "");
+        if (str.EndsWith(removeStr))
+        {
+            int len = str.Length;
+            return str.Remove(len - removeStr.Length, removeStr.Length);
+        }
+        else
+        {
+            Debug.LogError(str + "no EndsWith " + removeStr);
+            return str;
+        }
     }
 }
-
 
 public static class PathTool
 {
+    /// <summary>
+    /// 获取上级级目录
+    /// </summary>
+    public static string GetUpperDir(string path)
+    {
+        var upperPath = Directory.GetParent(path)?.FullName;
+        return upperPath;
+    }
+    
+
+#if UNITY_EDITOR
+    //获取Asset的ResourcePath
+    public static string GetAssetResourcePath(UnityEngine.Object asset)
+    {
+        if (asset == null)
+            return "";
+        string path = AssetDatabase.GetAssetPath(asset);
+        string str = path.RemoveHead("Assets/Resources/");
+        return str.RemoveEnd(".prefab");
+    }
+#endif
 }
 
 public static class FileTool
 {
+#if UNITY_EDITOR
     public static void OpenDir(string path ,bool isAssetPath = false)
     {
-#if UNITY_EDITOR
-        EditorUtility.RevealInFinder(CheckUpperDir(path));     
+        EditorUtility.RevealInFinder(PathTool.GetUpperDir(path));
+    }
 #endif
-    }
-        
-    public static string CheckUpperDir(string path)
-    {
-        if (Directory.Exists(path))
-        {
-            return path;
-        }
-        else
-        {
-            //路径无效查找上一层
-            path = path.Substring(0, path.LastIndexOf("/") + 1);
-        }
-        return path;
-    }
-
-    public static void WriteToFile(byte[] by, string filePath ,string checkDir = null)
-    {
-        if(checkDir!=null &&!Directory.Exists(checkDir))
-            Directory.CreateDirectory(checkDir);
-        File.WriteAllBytes(filePath, by);
-        Debug.LogFormat("WriteToFile {0}",filePath);
-    }
-
+    
     public static void WriteToFile(string str, string filePath)
     {
         using (StreamWriter sw = new StreamWriter(filePath, false, Encoding.UTF8))
@@ -265,7 +241,7 @@ public static class FileTool
         }
     }
 
-    public static void WriteToFile(List<string> strList, string filePath)
+    public static void WriteLineToFile(List<string> strList, string filePath)
     {
         string tempfile = Path.GetTempFileName();
         using (var writer = new StreamWriter(tempfile))
@@ -282,9 +258,15 @@ public static class FileTool
             Debug.Log("删除临时文件: " + tempfile);
             File.Delete(tempfile);
         }
-
     }
 
+    public static void WriteToFile(byte[] by, string filePath ,string checkDir = null)
+    {
+        if(checkDir!=null &&!Directory.Exists(checkDir))
+            Directory.CreateDirectory(checkDir);
+        File.WriteAllBytes(filePath, by);
+        Debug.LogFormat("WriteToFile {0}",filePath);
+    }
     public static byte[] ReadByte(string filePath)
     {
         return File.ReadAllBytes(filePath);
@@ -360,7 +342,7 @@ public static class FileTool
     {
         if (!IsFileExist(path))
         {
-            Debug.LogFormat("yns  no path {0}" , path);
+            Debug.LogFormat("yns no path {0}" , path);
             return null;
         }
         FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
@@ -377,113 +359,24 @@ public static class FileTool
 
 }
 
-
-public static class TaskAsyncHelper
+public static class PlayerPrefsTool 
 {
-    /// <summary>
-    /// 将一个方法function异步运行，在执行完毕时执行回调callback
-    /// </summary>
-    /// <param name="function">异步方法，该方法没有参数，返回类型必须是void</param>
-    /// <param name="callback">异步方法执行完毕时执行的回调方法，该方法没有参数，返回类型必须是void</param>
-    public static async void RunAsync(Action function, Action callback)
+    public static void SetKeyBool(this string key,bool isOn)
     {
-        Func<Task> taskFunc = () =>
-        {
-            return Task.Run(() =>
-            {
-                function();
-            });
-        };
-        await taskFunc();
-        if (callback != null)
-            callback();
+        PlayerPrefs.SetInt(key,isOn.ToInt());
+    }
+    public static bool GetKeyBool(this string key,bool isOn)
+    {
+        return PlayerPrefs.GetInt(key).ToBool();
     }
 
-    /// <summary>
-    /// 将一个方法function异步运行，在执行完毕时执行回调callback
-    /// </summary>
-    /// <typeparam name="TResult">异步方法的返回类型</typeparam>
-    /// <param name="function">异步方法，该方法没有参数，返回类型必须是TResult</param>
-    /// <param name="callback">异步方法执行完毕时执行的回调方法，该方法参数为TResult，返回类型必须是void</param>
-    public static async void RunAsync<TResult>(Func<TResult> function, Action<TResult> callback)
+    public static bool ToBool(this int num)
     {
-        Func<Task<TResult>> taskFunc = () =>
-        {
-            return Task.Run(() =>
-            {
-                return function();
-            });
-        };
-        TResult rlt = await taskFunc();
-        if (callback != null)
-            callback(rlt);
-    }
-}
-
-
-public static class EditorStringTool
-{
-    //移除开头
-    public static string RemoveHead(this string str, string removeStr)
-    {
-        if (str.StartsWith(removeStr))
-        {
-            return str.Remove(0, removeStr.Length);
-        }
-        else
-        {
-            Debug.LogError(str + "no StartsWith" + removeStr);
-            return str;
-        }
-    }
-    //移除结尾
-    public static string RemoveEnd(this string str, string removeStr)
-    {
-        if (str.EndsWith(removeStr))
-        {
-            int len = str.Length;
-            return str.Remove(len - removeStr.Length, removeStr.Length);
-        }
-        else
-        {
-            Debug.LogError(str + "no EndsWith " + removeStr);
-            return str;
-        }
+        return num != 0;
     }
 
-    //hasExtendName 是后包括文件扩展名
-    //获取路径的文件名
-    public static string GetFileNameByPath(this string str, bool hasExtendName = true)
+    public static int ToInt(this bool value)
     {
-        int last = str.LastIndexOf("/");
-        if (last < 0)
-        {
-            Debug.LogError("yns  no / ");
-        }
-        str = str.Remove(0, last + 1);
-        if (hasExtendName)
-            return str;
-        else
-        {
-            int pointIndex = str.LastIndexOf(".");
-            if (pointIndex < 0)
-            {
-                Debug.LogError("yns  no .");
-                return str;
-            }
-            str = str.Substring(0, pointIndex);
-            return str;
-        }
-    }
-    //将Asset路径转为ResourcePath
-    public static string AssetPathToResPath(this string path)
-    {
-        if (string.IsNullOrEmpty(path))
-        {
-            Debug.Log("yns path empty!");
-            return "";
-        }
-        string str = path.RemoveHead("Assets/Resources/");
-        return str.RemoveEnd(".prefab");
+        return value ? 1 : 0;
     }
 }

@@ -119,7 +119,6 @@ public static class LogToStringTool
                 {
                     proName = "Value";
                 }
-
                 GetObjString(targetObj, type).LogStr(typetype.ToString() + "_" +proName);
                 return;
             }
@@ -220,5 +219,26 @@ public static class LogToStringTool
         }
     }
 
+    public static string LogStr(this string str,string title = "Log")
+    {
+        if(!string.IsNullOrEmpty(str))
+            Debug.LogFormat("{0}: {1}",title ,str);
+        return str;
+    }
+
+    public static string LogListStr(this IList ieStr, string title = "" ,bool isLog = true)
+    {
+        int len = ieStr.Count;
+        title =$"{title} (len = " + len + ")\n";
+        string res = "";
+        for (int j = 0; j < len; j++)
+        {
+            res = $"{res}{ieStr[j].ToString()},";
+        }
+        string end = $"{title}{res}";
+        if (isLog)
+            Debug.Log(end);
+        return end;
+    }
 }
 

@@ -37,12 +37,13 @@ public class XC_ReadMe
 
 
     #region Log工具
+
     ///几个Log工具，可用于Debug
     ///
     ///1.string扩展方法 <see cref="StringTool.LogStr"/> 
     ///使用：str.LogStr() 相当于 Debug.Log(str);
     ///
-    ///2.数组Log <see cref="StringTool.LogListStr"/> 
+    ///2.数组Log <see cref="StringTool.ListToStr"/> 
     ///使用：list.IELogListStr() ，就不用自己写一遍遍历了
     ///
     ///3.任意类Log <see cref="LogToStringTool.LogObjectAll"/> 
@@ -55,8 +56,10 @@ public class XC_ReadMe
         Type type = typeof(Type);
         LogToStringTool.LogObjectAll(type, type);
     }
-    ///4.查询Asset类型 <see cref="EditorAssetExtend.LogType()"/> 
+
+    ///4.查询Asset类型 <see cref="XCEditorExtend.LogType()"/> 
     ///选中一个aseet右键->Check->输出Type
+
     #endregion
 
     #region 其他功能

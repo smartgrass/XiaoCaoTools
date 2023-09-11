@@ -38,10 +38,10 @@ namespace XiaoCao
             return objList;
         }
 
-        public static Object FindAssetByName(string nameStr, string TypeName, string path = "Assets")
+        public static Object FindAssetByName(string nameStr, string typeName, string path = "Assets")
         {
             Object obj = null;
-            string[] guids = AssetDatabase.FindAssets($"{nameStr} t:{TypeName}", new string[] { path });
+            string[] guids = AssetDatabase.FindAssets($"{nameStr} t:{typeName}", new string[] { path });
             List<string> paths = new List<string>();
             new List<string>(guids).ForEach(m => paths.Add(AssetDatabase.GUIDToAssetPath(m)));
             if (paths.Count > 0)
@@ -61,8 +61,7 @@ namespace XiaoCao
             }
             return objList;
         }
-
-
+        
 
         public static ObjectUsing GetOrNewSO(string path)
         {
@@ -98,52 +97,7 @@ namespace XiaoCao
             return objectUsing;
         }
     }
-
-    public static class XiaocaoPathTool
-    {
-        public static string FindXicaoDirectory()
-        {
-            string[] directories = Directory.GetDirectories("Assets", "XiaoCaoTools", SearchOption.AllDirectories);
-            return directories.Length > 0 ? directories[0] : string.Empty;
-        }
-    }
-
-
-    public class EditorAssetExtend
-    {
-        [MenuItem("Assets/Check/输出Type")]
-        private static void LogType()
-        {
-            Selection.activeObject.GetType().Name.LogStr(Selection.activeObject.name);
-        }
-
-        [MenuItem("CONTEXT/Object/LogThis")]
-        private static void LogThis(MenuCommand menuCommand)
-        {
-            var obj = menuCommand.context;
-            LogToStringTool.LogObjectAll(obj, obj.GetType());
-        }
-
-        public static void SavaAsset(UnityEngine.Object obj)
-        {
-            if (obj == null)
-                return;
-
-            EditorUtility.SetDirty(obj);
-            if (obj is ScriptableObject)
-            {
-                var serializedObject = new SerializedObject(new UnityEngine.Object[] { obj }, obj);
-                serializedObject.ApplyModifiedProperties();
-                Debug.Log($"yns  ApplyModifiedProperties");
-            }
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-        }
-
-
-    }
-
-
+    
     public static class XCEditorTool_TMP
     {
 
@@ -185,11 +139,7 @@ namespace XiaoCao
 
                     TextMeshProUGUI textMeshPro = target.gameObject.AddComponent<TextMeshProUGUI>();
                     ComponentUtility.MoveComponentUp(textMeshPro); //上移
-                                                                   //target.gameObject.
-                                                                   //if (tmp_Font == null)
-                                                                   //{
-                                                                   //    tmp_Font = Resources.Load<TMP_FontAsset>("MyTextMesh");
-                                                                   //}
+
                     textMeshPro.rectTransform.sizeDelta = size;
                     textMeshPro.text = strContent;
                     textMeshPro.color = color;
@@ -259,25 +209,28 @@ namespace XiaoCao
         [MenuItem("GameObject/XiaoCao/替换子物体TMP字体", priority = 0)]
         private static void CheckEnTMPFont()
         {
+            string fontPath = "Assets/RawResources/Font/Aldrich-Regular SDF.asset";
+            
             Transform tf = Selection.activeTransform;
             var tmps = tf.GetComponentsInChildren<TMP_Text>(true);
 
-            TMP_FontAsset font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/RawResources/Font/Aldrich-Regular SDF.asset");
+            TMP_FontAsset font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(fontPath);
+            if (font == null)
+            {
+                Debug.Log("没有找到字体");
+                return;
+            }
 
             foreach (var item in tmps)
             {
-                if (!item.font.name.Contains("Aldrich-Regular"))
+                if (item.font!= font)
                 {
                     item.font = font;
-                    Debug.Log($"yns  {item.gameObject.name}");
                     EditorUtility.SetDirty(item);
                 }
             }
         }
 
     }
-
-
-
-
+    
 }
