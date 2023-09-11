@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
-using UnityEditor.Experimental.SceneManagement;
+#if UNITY_2021_1_OR_NEWER
+using UnityEditor.SceneManagement;
+#endif
 using UnityEngine;
 using UnityEngine.UI;
 using XiaoCao;
