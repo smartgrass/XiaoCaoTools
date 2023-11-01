@@ -4,9 +4,9 @@
 
 本项目基于[NaughtyAttributes](https://github.com/dbrizov/NaughtyAttributes) 开发
 
-需要 Newtonsoft.dll
+## 使用
 
-然后将XiaoCaoTools整个文件夹复制进项目即可
+需要Newtonsoft.dll, 然后将XiaoCaoTools整个文件夹复制进项目即可
  
 # 演示 
 
