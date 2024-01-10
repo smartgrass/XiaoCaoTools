@@ -16,7 +16,7 @@ using UnityEditor;
 ///<see cref="PathTool"/> 路径处理相关   
 ///<see cref="FileTool"/>  File IO相关
 ///<see cref="PlayerPrefsTool"/>  PlayerPrefs
-///<see cref="LogToStringTool"/> Log相关
+///<see cref="LogObjectTool"/> Log相关
 
 
 //矩形排列, TODO: 圆形排列

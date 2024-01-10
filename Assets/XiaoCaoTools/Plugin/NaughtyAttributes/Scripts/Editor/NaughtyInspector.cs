@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using ET;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Xml.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -82,6 +84,8 @@ namespace NaughtyAttributes.Editor
             DrawNonSerializedFields();
             DrawNativeProperties();
             DrawButtons();
+
+            ComponentViewHelper.Draw(target);
         }
         protected void DrawButtons(bool drawHeader = true)
         {
@@ -92,15 +96,6 @@ namespace NaughtyAttributes.Editor
                     NaughtyEditorGUI.ButtonList(serializedObject.targetObject, methodDic[item], item != 0);
                 }
             }
-
-            //if (drawHeader)
-            //{
-            //    EditorGUILayout.Space();
-            //    EditorGUILayout.LabelField("Buttons", GetHeaderGUIStyle());
-            //    NaughtyEditorGUI.HorizontalLine(
-            //        EditorGUILayout.GetControlRect(false), HorizontalLineAttribute.DefaultHeight, HorizontalLineAttribute.DefaultColor.GetColor());
-            //}
-
         }
 
         protected void GetSerializedProperties(ref List<SerializedProperty> outSerializedProperties)
@@ -120,40 +115,30 @@ namespace NaughtyAttributes.Editor
         }
 
 
-        private SerializedObject GetSO(Object obj)
-        {
-            if (!SoDic.ContainsKey(obj))
-            {
-                SoDic.Add(obj, new SerializedObject(obj));
-            }
-            return SoDic[obj];
-        }
+        //弃用
+        //public bool CheckDrawSubProperty(SerializedProperty property)
+        //{
+            //if (property.propertyType == SerializedPropertyType.ObjectReference)
+            //{
+            //    if (property.objectReferenceValue && PropertyUtility.GetAttribute<SerializeField>(property) != null)
+            //    {
+            //        var so = GetSO(property.objectReferenceValue);
 
-        //是否 绘制可扩展对象
-        public bool CheckDrawSubProperty(SerializedProperty property)
-        {
-            if (property.propertyType == SerializedPropertyType.ObjectReference)
-            {
-                if (property.objectReferenceValue && PropertyUtility.GetAttribute<SerializeField>(property) != null)
-                {
-                    var so = GetSO(property.objectReferenceValue);
-
-                    property.objectReferenceValue = EditorGUILayout.ObjectField(PropertyUtility.GetLabel(property), property.objectReferenceValue, typeof(Object), true);
-
-                    //NaughtyEditorGUI.PropertyField_Layout(property, true);
-
-                    if (property.isExpanded = EditorGUILayout.Foldout(property.isExpanded, property.displayName))
-                    {
-                        NaughtyEditorGUI.DoDrawDefaultInspector(so);
-                    }
-                    return true;
-                }
-            }
-            return false;
-        }
+            //        property.objectReferenceValue = EditorGUILayout.ObjectField(PropertyUtility.GetLabel(property), property.objectReferenceValue, typeof(Object), true);
 
 
-        protected void DrawSerializedProperties()
+            //        if (property.isExpanded = EditorGUILayout.Foldout(property.isExpanded, property.displayName))
+            //        {
+            //            NaughtyEditorGUI.DoDrawDefaultInspector(so);
+            //        }
+            //        return true;
+            //    }
+            //}
+            //return false;
+        //}
+
+
+        protected  void DrawSerializedProperties()
         {
             serializedObject.Update();
             int i = 1;
@@ -164,16 +149,25 @@ namespace NaughtyAttributes.Editor
                 {
                     using (new EditorGUI.DisabledScope(disabled: true))
                     {
-                        EditorGUILayout.PropertyField(property);
+                        if (property.objectReferenceValue == null)
+                        {
+                            //if (serializedObject.targetObject is ScriptableObject so)
+                            //{
+                            //    MonoScript ms = MonoScript.FromScriptableObject(so);
+                            //    EditorGUILayout.ObjectField("", ms, typeof(Object), true);
+                            //}              
+                            var namePro = serializedObject.FindProperty("m_Name");
+                            EditorGUILayout.ObjectField(namePro.stringValue, targets[0], typeof(Object), true);
+                        }
+                        else
+                        {
+                            EditorGUILayout.PropertyField(property);
+                        }
                     }
                 }
                 else
                 {
-                    //是否 绘制可扩展对象
-                    //if (!CheckDrawSubProperty(property))
-                    //{
                     NaughtyEditorGUI.PropertyField_Layout(property, true);
-                    //}
 
                     //按钮
                     if (methodDic.ContainsKey(-i))

@@ -128,7 +128,7 @@ public class XiaoCaoReferenceWindow2 : XiaoCaoWindow
         Debug.Log("Assets Count " + assets.Count);
 
         if (HasUsingPngDic.Count > 0)
-            LogToStringTool.LogObjectAll(HasUsingPngDic, HasUsingPngDic.GetType());
+            LogObjectTool.LogObjectAll(HasUsingPngDic, HasUsingPngDic.GetType());
 
         var unFindSprete = _selectPngPaths.FindAll(p => !HasUsingPngDic.ContainsKey(p)
         || HasUsingPngDic[p] <= lessTime);

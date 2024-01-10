@@ -198,7 +198,7 @@ namespace NaughtyAttributes.Editor
 	{
 		protected override float GetPropertyHeight_Internal(SerializedProperty property, GUIContent label)
 		{
-			System.Type propertyType = PropertyUtility.GetPropertyType(property);
+            System.Type propertyType = PropertyUtility.GetPropertyType(property);
 			if (property.propertyType == SerializedPropertyType.ObjectReference)
 			{
 				Object scriptableObject = property.objectReferenceValue;
@@ -226,6 +226,7 @@ namespace NaughtyAttributes.Editor
 									}
 
 									bool visible = PropertyUtility.IsVisible(childProperty);
+
 									if (!visible)
 									{
 										continue;

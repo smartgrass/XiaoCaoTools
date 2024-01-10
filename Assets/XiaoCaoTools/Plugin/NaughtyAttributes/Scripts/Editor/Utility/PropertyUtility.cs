@@ -9,7 +9,48 @@ namespace NaughtyAttributes.Editor
 {
 	public static class PropertyUtility
 	{
-		public static T GetAttribute<T>(SerializedProperty property) where T : class
+        public static void GetAttrProperties<T>(SerializedObject serializedObject, ref List<SerializedProperty> outSerializedProperties) where T : class
+        {
+            using (var iterator = serializedObject.GetIterator())
+            {
+                if (iterator.NextVisible(true))
+                {
+                    do
+                    {
+                        var pro = serializedObject.FindProperty(iterator.name);
+
+                        if (PropertyUtility.GetAttribute<T>(pro) != null)
+                        {
+                            outSerializedProperties.Add(serializedObject.FindProperty(iterator.name));
+                        }
+                    }
+                    while (iterator.NextVisible(false));
+                }
+            }
+        }
+
+        public static void GetAttrProAndAttrs<T>(SerializedObject serializedObject, ref List<SerializedProperty> outSerializedProperties, ref List<T> attrs) where T : class
+        {
+            using (var iterator = serializedObject.GetIterator())
+            {
+                if (iterator.NextVisible(true))
+                {
+                    do
+                    {
+                        var pro = serializedObject.FindProperty(iterator.name);
+						var attr = PropertyUtility.GetAttribute<T>(pro);
+                        if (attr != null)
+                        {
+                            outSerializedProperties.Add(serializedObject.FindProperty(iterator.name));
+							attrs.Add(attr);
+                        }
+                    }
+                    while (iterator.NextVisible(false));
+                }
+            }
+        }
+
+        public static T GetAttribute<T>(SerializedProperty property) where T : class
 		{
 			T[] attributes = GetAttributes<T>(property);
 			return (attributes.Length > 0) ? attributes[0] : null;
@@ -95,7 +136,7 @@ namespace NaughtyAttributes.Editor
 			ShowIfAttributeBase showIfAttribute = GetAttribute<ShowIfAttributeBase>(property);
 			if (showIfAttribute == null)
 			{
-				return true;
+                return true;
 			}
 
 			object target = GetTargetObjectWithProperty(property);

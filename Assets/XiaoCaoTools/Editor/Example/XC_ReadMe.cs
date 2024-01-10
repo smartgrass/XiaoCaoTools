@@ -46,7 +46,7 @@ public class XC_ReadMe
     ///2.数组Log <see cref="StringTool.ListToStr"/> 
     ///使用：list.IELogListStr() ，就不用自己写一遍遍历了
     ///
-    ///3.任意类Log <see cref="LogToStringTool.LogObjectAll"/> 
+    ///3.任意类Log <see cref="LogObjectTool.LogObjectAll"/> 
     ///使用反射，详细输出对象的所有字段和属性。
     ///扩展：组件右键->LogThis,可以Log组件Inspector看不到的信息 <see cref="EditorAssetExtend.LogThis"/> 
     ///其他：对于Unity一些隐藏类，也可以利用反射看到其中字段的值 
@@ -54,7 +54,7 @@ public class XC_ReadMe
     public static void LogType()
     {
         Type type = typeof(Type);
-        LogToStringTool.LogObjectAll(type, type);
+        LogObjectTool.LogObjectAll(type, type);
     }
 
     ///4.查询Asset类型 <see cref="XCEditorExtend.LogType()"/> 

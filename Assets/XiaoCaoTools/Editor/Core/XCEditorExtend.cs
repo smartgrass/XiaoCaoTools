@@ -14,7 +14,7 @@ public static class XCEditorExtend
     private static void LogThis(MenuCommand menuCommand)
     {
         var obj = menuCommand.context;
-        LogToStringTool.LogObjectAll(obj, obj.GetType());
+        LogObjectTool.LogObjectAll(obj, obj.GetType());
     }
     
     [MenuItem("Assets/Open By Default", false, 2)]
