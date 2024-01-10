@@ -16,10 +16,7 @@ namespace ET
         {
             base.OnInspectorGUI();
 
-            if (Application.isPlaying)
-            {
-                ComponentViewHelper.Draw(target);
-            }
+            ComponentViewHelper.Draw(target);
         }
     }
 
@@ -90,16 +87,11 @@ namespace ET
                 {
                     Type type = fieldInfo.FieldType;
 
+                    //if (fieldInfo.IsDefined(typeof (HideInInspector), false))
                     if (type.IsDefined(typeof(HideInInspector), false))
                     {
                         continue;
                     }
-
-                    //if (fieldInfo.IsDefined(typeof (HideInInspector), false))
-                    //{
-                    //    continue;
-                    //}
-
 
                     string fieldName = fieldInfo.Name;
                     object value = fieldInfo.GetValue(entity);
@@ -145,7 +137,8 @@ namespace ET
                     if (!isDrawed && curLayer < maxlayer)
                     {
                         //绘制Object类型
-                        if (CheckAndDrawObject(type, value, fieldInfo.Name)){
+                        if (CheckAndDrawObject(type, value, fieldInfo.Name))
+                        {
                             continue;
                         }
 
@@ -166,7 +159,7 @@ namespace ET
                                     {
                                         if (isObjectType)
                                         {
-                                            DrawObject(elementType, sub,i.ToString());
+                                            DrawObject(elementType, sub, i.ToString());
                                         }
                                         else if (isDicType)
                                         {
@@ -211,7 +204,7 @@ namespace ET
             return isObject;
         }
 
-        private static void DrawObject(Type type, object value,string showName)
+        private static void DrawObject(Type type, object value, string showName)
         {
             objectDrawer.DrawObject(type, showName, value);
             if (objectDrawer.IsDrawChildren(type))
