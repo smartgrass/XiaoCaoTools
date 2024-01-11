@@ -16,7 +16,7 @@ namespace ET
         {
             base.OnInspectorGUI();
 
-            ComponentViewHelper.Draw(target);         
+            ComponentViewHelper.Draw(target);
         }
     }
 
@@ -74,7 +74,7 @@ namespace ET
 
                 if (curLayer == 0)
                 {
-                    isDebug = EditorGUILayout.Toggle("=====Editor View====", (bool)isDebug);
+                    isDebug = EditorGUILayout.Toggle("===Editor View===", (bool)isDebug);
                     if (!isDebug)
                     {
                         return;
@@ -142,18 +142,27 @@ namespace ET
                             continue;
                         }
 
-                        if (IsFoldoutKey(type, fieldInfo.Name))
+                        bool isCollection = IsICollectionType(type, out Type elementType);
+                        //绘制数组类型
+                        if (isCollection)
                         {
-                            //绘制数组类型
-                            if (IsICollectionType(type, out Type elementType))
+                            if (value == null)
                             {
-                                bool isObjectType = objectDrawer.IsObjectType(elementType);
-                                bool isDicType = IDictionaryType.IsAssignableFrom(type);
-                                curLayer++;
-                                EditorGUI.indentLevel++;
-                                //展开数组类
-                                if (value is ICollection listValue)
+                                GUILayout.Label($"{fieldInfo.Name} null", EditorStyles.boldLabel);
+                                continue;
+                            }
+
+                            if (value is ICollection listValue)
+                            {
+                                int count = listValue.Count;
+                                if (IsFoldoutKey(type, fieldInfo.Name, count))
                                 {
+                                    bool isObjectType = objectDrawer.IsObjectType(elementType);
+                                    bool isDicType = IDictionaryType.IsAssignableFrom(type);
+                                    curLayer++;
+                                    EditorGUI.indentLevel++;
+
+                                    //展开数组类
                                     int i = 0;
                                     foreach (var sub in listValue)
                                     {
@@ -161,28 +170,25 @@ namespace ET
                                         {
                                             DrawObject(elementType, sub, i.ToString());
                                         }
-                                        else if (isDicType)
-                                        {
-                                            Draw(sub);
-                                        }
                                         else
                                         {
                                             Draw(sub);
                                         }
                                         i++;
                                     }
-                                }
 
-                                EditorGUI.indentLevel--;
-                                curLayer--;
-                            }
-                            //绘制普通类
-                            else
-                            {
-                                DrawChildren(value);
+                                    EditorGUI.indentLevel--;
+                                    curLayer--;
+                                }
+                                continue;
                             }
                         }
 
+                        //绘制普通类
+                        if (IsFoldoutKey(type, fieldInfo.Name))
+                        {
+                            DrawChildren(value);
+                        }
                     }
                 }
 
@@ -206,14 +212,14 @@ namespace ET
 
         private static void DrawObject(Type type, object value, string showName)
         {
-            if (value != null)
+            bool isNotNull = value != null;
+            if (isNotNull)
             {
                 type = value.GetType();
             }
             objectDrawer.DrawObject(type, showName, value);
-            if (objectDrawer.IsDrawChildren(type))
+            if (isNotNull && objectDrawer.IsDrawChildren(type))
             {
-
                 if (IsFoldoutKey(type, showName))
                 {
                     DrawChildren(value);
@@ -221,14 +227,19 @@ namespace ET
             }
         }
         //是否展开
-        private static bool IsFoldoutKey(Type type, string showName)
+        private static bool IsFoldoutKey(Type type, string fieldInfoName, int chirldCount = -1)
         {
-            string key = $"{type.Name}.{showName}.{curLayer}";
+            string key = $"{type.Name}.{fieldInfoName}.{curLayer}";
+            string label = fieldInfoName;
+            if (chirldCount >= 0)
+            {
+                label = $"{fieldInfoName} (len = {chirldCount})";
+            }
             if (!_foldouts.ContainsKey(key))
             {
                 _foldouts[key] = new SavedBool(key, false);
             }
-            _foldouts[key].Value = EditorGUILayout.Foldout(_foldouts[key].Value, showName);
+            _foldouts[key].Value = EditorGUILayout.Foldout(_foldouts[key].Value, label);
 
             return _foldouts[key].Value;
         }
@@ -267,28 +278,6 @@ namespace ET
             curLayer--;
         }
 
-        private static void DrawHeader(object sub)
-        {
-            if (sub != null)
-            {
-                Type type = sub.GetType();
-                foreach (var item in otherDrawers)
-                {
-                    if (item.HandlesType(type))
-                    {
-                        try
-                        {
-                            item.DrawAndGetNewValue(type, "", sub, null);
-                        }
-                        catch (Exception e)
-                        {
-                            Debug.LogError(e);
-                        }
-                        break;
-                    }
-                }
-            }
-        }
     }
 
     internal class SavedBool
