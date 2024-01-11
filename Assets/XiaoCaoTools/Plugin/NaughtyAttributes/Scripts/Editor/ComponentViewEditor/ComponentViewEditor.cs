@@ -16,7 +16,7 @@ namespace ET
         {
             base.OnInspectorGUI();
 
-            ComponentViewHelper.Draw(target);
+            ComponentViewHelper.Draw(target);         
         }
     }
 
@@ -206,9 +206,14 @@ namespace ET
 
         private static void DrawObject(Type type, object value, string showName)
         {
+            if (value != null)
+            {
+                type = value.GetType();
+            }
             objectDrawer.DrawObject(type, showName, value);
             if (objectDrawer.IsDrawChildren(type))
             {
+
                 if (IsFoldoutKey(type, showName))
                 {
                     DrawChildren(value);
@@ -327,7 +332,7 @@ namespace ET
 
         internal bool IsDrawChildren(Type type)
         {
-            return type.IsSubclassOf(typeof(UnityEngine.MonoBehaviour));
+            return type.IsSubclassOf(typeof(UnityEngine.Component));
         }
 
         public object DrawObject(Type memberType, string memberName, object value)
