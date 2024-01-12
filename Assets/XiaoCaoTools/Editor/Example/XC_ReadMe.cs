@@ -20,30 +20,22 @@ public class XC_ReadMe
     ///XiaoCaoWindow使用
     ///
     ///1.Unity对象收藏夹 
-    ///from <see cref="XiaoCaoObjectUsing"/>
+    ///from <see cref="ObjectsWindow"/>
     ///打开位置: Tools/XiaoCao/对象收藏夹
     ///
-    ///2.反射查看Unity窗口
-    ///from <see cref="XiaoCaoEexample_Pro"/>
-    ///打开位置: Tools/XiaoCao/反射查看Unity窗口
-    ///
-    ///3.Json编辑窗口
-    ///from <see cref="XiaoCaoJsonWin"/>
-    ///打开位置: Tools/XiaoCao/Json编辑窗口
-    ///
     ///4.Mono类预制体查找
-    ///from <see cref="XiaoCaoFindMonoPrefab"/>
-    ///打开位置: Tools/XiaoCao/Mono类预制体查找
+    ///from <see cref="XiaoCaoReferenceWindow2"/>
+    ///打开位置: Tools/XiaoCao/图片引用查找
 
 
     #region Log工具
 
     ///几个Log工具，可用于Debug
     ///
-    ///1.string扩展方法 <see cref="StringTool.LogStr"/> 
+    ///1.string扩展方法 <see cref="LogObjectTool.LogStr"/> 
     ///使用：str.LogStr() 相当于 Debug.Log(str);
     ///
-    ///2.数组Log <see cref="StringTool.ListToStr"/> 
+    ///2.数组Log <see cref="LogObjectTool.ListToStr"/> 
     ///使用：list.IELogListStr() ，就不用自己写一遍遍历了
     ///
     ///3.任意类Log <see cref="LogObjectTool.LogObjectAll"/> 
@@ -64,19 +56,10 @@ public class XC_ReadMe
 
     #region 其他功能
 
-    //1.Text转TMP
-    ///from <see cref="XCEditorTool_TMP.OnTextToTmp"/>
-    //使用方法:选中预制体->右键Check/TextToTmp
-    //说明:将Text转为TextMeshProUGUI,并保持原大小位置
-
-    //2.替换子物体TMP字体
-    ///from <see cref="XCEditorTool_TMP.CheckEnTMPFont"/>
-    //使用方法:选中物体->右键XiaoCao/替换子物体TMP字体
-
     ///from <see cref="XiaoCaoReferenceWindow2"/>
     ///from <see cref="EditorReferenceTools.FindPngInAll"/>
     ///from <see cref="EditorReferenceTools.CheckDependeces"/>
-    //3.询图片引用 XiaoCaoReferenceWindow2
+    //询图片引用 XiaoCaoReferenceWindow2
 
     #endregion
 }
