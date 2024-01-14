@@ -65,3 +65,4 @@ crashlytics-build.properties
 /.idea/.idea.XiaoCaoTools/.idea/vcs.xml
 /UserSettings/Layouts/default-2021.dwlt
 /.idea/.idea.XiaoCaoTools/.**
+/Assets/Ignore**

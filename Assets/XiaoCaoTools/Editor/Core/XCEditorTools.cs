@@ -95,6 +95,7 @@ namespace XiaoCaoEditor
             if (objectUsing == null)
             {
                 var newObject = ScriptableObject.CreateInstance<T>();
+                FileTool.CheckFilePathDir(path);
                 AssetDatabase.CreateAsset(newObject, path);
                 AssetDatabase.Refresh();
                 objectUsing = AssetDatabase.LoadAssetAtPath<T>(path);
