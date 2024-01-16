@@ -1,9 +1,15 @@
-﻿using System;
+﻿using NaughtyAttributes;
+using NUnit.Framework;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
+using static ET.SavedBool;
 using Debug = UnityEngine.Debug;
 
 namespace ET
@@ -26,7 +32,9 @@ namespace ET
         private static readonly Dictionary<Type, ITypeDrawer> typeDrawers = new Dictionary<Type, ITypeDrawer>();
         private static readonly List<IOtherTypeDrawer> otherDrawers = new List<IOtherTypeDrawer>();
         private static readonly UnityObjectTypeDrawer objectDrawer = new UnityObjectTypeDrawer();
+        private static readonly MethodInfo SetListMethod = typeof(ComponentViewHelper).GetMethod(nameof(SetList), (BindingFlags)~BindingFlags.Default);
 
+        private static BaseTypes types = new BaseTypes();
         private static Type IDictionaryType = typeof(IDictionary);
         private static Type IListType = typeof(IList);
 
@@ -137,7 +145,7 @@ namespace ET
                     if (!isDrawed && curLayer < maxlayer)
                     {
                         //绘制Object类型
-                        if (CheckAndDrawObject(type, value, fieldInfo.Name))
+                        if (CheckAndDrawObject(type, value, fieldInfo, entity))
                         {
                             continue;
                         }
@@ -161,21 +169,43 @@ namespace ET
                                     bool isDicType = IDictionaryType.IsAssignableFrom(type);
                                     curLayer++;
                                     EditorGUI.indentLevel++;
-
+                                    bool isList = listValue is IList;
+                                    (int, object) change = (-1, null);
                                     //展开数组类
                                     int i = 0;
                                     foreach (var sub in listValue)
                                     {
                                         if (isObjectType)
                                         {
-                                            DrawObject(elementType, sub, i.ToString());
+                                            var newSub = DrawObject(elementType, sub, i.ToString());
+                                            if (sub != newSub)
+                                            {
+                                                change = (i, newSub);
+                                            }
                                         }
                                         else
                                         {
-                                            Draw(sub);
+                                            if (typeDrawers.TryGetValue(elementType,out ITypeDrawer drawer)){
+                                                var newSub = drawer.DrawAndGetNewValue(elementType, i.ToString(), sub, null);
+                                                if (!sub.Equals(newSub))
+                                                {
+                                                    change = (i, newSub);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Draw(sub);
+                                            }
                                         }
                                         i++;
                                     }
+
+                                    //List<值类型> 暂时无法修改..未知原因
+                                    if (isList && change.Item1 >= 0)
+                                    {
+                                        TrySetListValue(change.Item2, listValue, change.Item1);
+                                    }
+
 
                                     EditorGUI.indentLevel--;
                                     curLayer--;
@@ -196,28 +226,62 @@ namespace ET
             }
             catch (Exception e)
             {
-                UnityEngine.Debug.Log($"component view error: {entity.GetType().FullName} {e}");
+                UnityEngine.Debug.LogError($"component view error: {entity.GetType().FullName} {e}");
             }
         }
 
-        private static bool CheckAndDrawObject(Type type, object value, string showName)
+        private static void TrySetListValue(object setValue, ICollection listValue, int i)
         {
+            try
+            {
+                var listType = listValue.GetType();
+                if (listType.IsArray)
+                {
+                    Array array = (Array)listValue;
+                    array.SetValue(setValue, i);
+                }
+                else if (listType.IsGenericType)
+                {
+                    var elementTypes = listType.GetGenericArguments();
+                    if (elementTypes.Length == 1)
+                    {
+                        Debug.Log($"--- elementTypes[0] {elementTypes[0]} {setValue} ");
+                        SetListMethod.MakeGenericMethod(elementTypes[0]).Invoke(null, new object[] { listValue, setValue, i });
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                Debug.LogWarning($"--- TrySetListValue {e}");
+            }
+
+        }
+
+        public static void SetList<T>(List<T> list, T value, int i) where T : class
+        {
+            list[i] = value;
+        }
+
+        private static bool CheckAndDrawObject(Type type, object value, FieldInfo fieldInfo, object entity)
+        {
+            string showName = fieldInfo.Name;
             bool isObject = objectDrawer.IsObjectType(type);
             if (isObject)
             {
-                DrawObject(type, value, showName);
+                value = DrawObject(type, value, showName);
+                fieldInfo.SetValue(entity, value);
             }
             return isObject;
         }
 
-        private static void DrawObject(Type type, object value, string showName)
+        private static object DrawObject(Type type, object value, string showName)
         {
             bool isNotNull = value != null;
             if (isNotNull)
             {
                 type = value.GetType();
             }
-            objectDrawer.DrawObject(type, showName, value);
+            value = objectDrawer.DrawObject(type, showName, value);
             if (isNotNull && objectDrawer.IsDrawChildren(type))
             {
                 if (IsFoldoutKey(type, showName))
@@ -225,6 +289,7 @@ namespace ET
                     DrawChildren(value);
                 }
             }
+            return value;
         }
         //是否展开
         private static bool IsFoldoutKey(Type type, string fieldInfoName, int chirldCount = -1)
@@ -277,7 +342,12 @@ namespace ET
             EditorGUI.indentLevel--;
             curLayer--;
         }
-
+        private static bool IsValueType(Type type)
+        {
+            return type == types._string
+                || type.IsSubclassOf(types.ValueType)
+                || type.IsSubclassOf(types.Enum);
+        }
     }
 
     internal class SavedBool
@@ -309,7 +379,15 @@ namespace ET
             _value = EditorPrefs.GetBool(name, value);
         }
     }
-
+    public class BaseTypes
+    {
+        public Type _string = typeof(string);
+        public Type ValueType = typeof(ValueType);
+        public Type ScriptableObject = typeof(ScriptableObject);
+        public Type Enum = typeof(Enum);
+        public Type IDictionary = typeof(IDictionary);
+        public Type IList = typeof(IList);
+    }
 
     public class UnityObjectTypeDrawer
     {
