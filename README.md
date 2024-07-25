@@ -45,7 +45,7 @@ public class XiaoCaoEexample_0 : XiaoCaoWindow
 
 
 
-### 2. Unity收藏夹 [XiaoCaoObjectUsing .cs](https://github.com/smartgrass/XiaoCaoTools/blob/main/Assets/XiaoCaoTools/Editor/Example/XiaoCaoObjectUsing.cs) :
+### 2. Unity收藏夹 [XiaoCaoObjectUsing .cs](https://github.com/smartgrass/XiaoCaoTools/blob/main/Assets/XiaoCaoTools/Runtime/Core/ObjectUsing.cs) :
 定义一个SO类字段, 便可当作收藏夹
  ```
     [Expandable()]
